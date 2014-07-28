@@ -9,6 +9,7 @@ type token =
   | COLON
   | NEWLINE
   | EOF
+  | ASSN_EQUAL
   | IDENT of (string)
   | STRING of (string)
   | QUAL of (string)
@@ -24,7 +25,7 @@ let _ = parse_error;;
   open Ast
   open Printf
 (*  let symbol_table:(string, string) Hashtbl.t = Hashtbl.empty *)
-# 28 "parser.ml"
+# 29 "parser.ml"
 let yytransl_const = [|
   257 (* LEFT_PAREN *);
   258 (* RIGHT_PAREN *);
@@ -36,45 +37,46 @@ let yytransl_const = [|
   264 (* COLON *);
   265 (* NEWLINE *);
     0 (* EOF *);
+  266 (* ASSN_EQUAL *);
     0|]
 
 let yytransl_block = [|
-  266 (* IDENT *);
-  267 (* STRING *);
-  268 (* QUAL *);
-  269 (* KEYWORD *);
-  270 (* SIMPLE_STMT *);
-  271 (* OPER *);
-  272 (* INT *);
+  267 (* IDENT *);
+  268 (* STRING *);
+  269 (* QUAL *);
+  270 (* KEYWORD *);
+  271 (* SIMPLE_STMT *);
+  272 (* OPER *);
+  273 (* INT *);
     0|]
 
 let yylhs = "\255\255\
-\001\000\000\000"
+\001\000\001\000\000\000"
 
 let yylen = "\002\000\
-\003\000\002\000"
+\003\000\002\000\002\000"
 
 let yydefred = "\000\000\
-\000\000\000\000\000\000\002\000\000\000\001\000"
+\000\000\000\000\000\000\000\000\003\000\002\000\000\000\001\000"
 
 let yydgoto = "\002\000\
-\004\000"
+\005\000"
 
-let yysindex = "\255\255\
-\247\254\000\000\001\255\000\000\002\255\000\000"
+let yysindex = "\001\000\
+\253\254\000\000\255\254\000\255\000\000\000\000\002\255\000\000"
 
 let yyrindex = "\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000"
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"
 
 let yygindex = "\000\000\
 \000\000"
 
-let yytablesize = 4
-let yytable = "\001\000\
-\003\000\005\000\000\000\006\000"
+let yytablesize = 8
+let yytable = "\003\000\
+\007\000\001\000\006\000\008\000\000\000\000\000\000\000\004\000"
 
-let yycheck = "\001\000\
-\010\001\001\001\255\255\002\001"
+let yycheck = "\003\001\
+\001\001\001\000\004\001\002\001\255\255\255\255\255\255\011\001"
 
 let yynames_const = "\
   LEFT_PAREN\000\
@@ -87,6 +89,7 @@ let yynames_const = "\
   COLON\000\
   NEWLINE\000\
   EOF\000\
+  ASSN_EQUAL\000\
   "
 
 let yynames_block = "\
@@ -105,10 +108,16 @@ let yyact = [|
     let _1 = (Parsing.peek_val __caml_parser_env 2 : string) in
     Obj.repr(
 # 21 "parser.mly"
-                                   ( print_endline "double check "; FuncCall("hello"))
-# 110 "parser.ml"
+                                   ( print_endline _1; FuncCall("any string"))
+# 113 "parser.ml"
                : Ast.expr))
-(* Entry expr *)
+; (fun __caml_parser_env ->
+    Obj.repr(
+# 22 "parser.mly"
+                             ( print_endline "we got some braces"; FuncCall("some bs") )
+# 119 "parser.ml"
+               : Ast.expr))
+(* Entry prog *)
 ; (fun __caml_parser_env -> raise (Parsing.YYexit (Parsing.peek_val __caml_parser_env 0)))
 |]
 let yytables =
@@ -128,5 +137,5 @@ let yytables =
     Parsing.error_function=parse_error;
     Parsing.names_const=yynames_const;
     Parsing.names_block=yynames_block }
-let expr (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
+let prog (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
    (Parsing.yyparse yytables 1 lexfun lexbuf : Ast.expr)

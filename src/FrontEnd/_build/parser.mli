@@ -9,6 +9,7 @@ type token =
   | COLON
   | NEWLINE
   | EOF
+  | ASSN_EQUAL
   | IDENT of (string)
   | STRING of (string)
   | QUAL of (string)
@@ -17,5 +18,5 @@ type token =
   | OPER of (char)
   | INT of (int)
 
-val expr :
+val prog :
   (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.expr

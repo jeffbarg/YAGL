@@ -14,7 +14,9 @@ rule main_entry = parse
   | '['                                                     { LEFT_BRACKET } 
   | ']'                                                     { RIGHT_BRACKET } 
   | '('                                                     { LEFT_PAREN }
+  (* Need to add the relational operators and the logical operators && || *)
   | ')'                                                     { RIGHT_PAREN }
+  | '='                                                     { ASSN_EQUAL } 
   | '{'                                                     { LEFT_BRACE } 
   | '}'                                                     { RIGHT_BRACE }
   | ['#']['A'-'Z' 'a'-'z' '0'-'9' '_']*                     { main_entry lexbuf }

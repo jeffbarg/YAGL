@@ -26,9 +26,9 @@
 # Target: parser.cmx, tags: { compile, extension:cmx, extension:ml, file:parser.cmx, file:parser.ml, implem, native, ocaml, quiet }
 /usr/local/bin/ocamlopt.opt -c -o parser.cmx parser.ml
 # Target: scanner.cmx, tags: { compile, extension:cmx, extension:ml, file:scanner.cmx, file:scanner.ml, implem, native, ocaml, quiet }
-/usr/local/bin/ocamlopt.opt -c -o scanner.cmx scanner.ml # cached
+/usr/local/bin/ocamlopt.opt -c -o scanner.cmx scanner.ml
 # Target: output_test.cmx, tags: { compile, extension:cmx, extension:ml, file:output_test.cmx, file:output_test.ml, implem, native, ocaml, quiet }
-/usr/local/bin/ocamlopt.opt -c -o output_test.cmx output_test.ml # cached
+/usr/local/bin/ocamlopt.opt -c -o output_test.cmx output_test.ml
 # Target: output_test.native, tags: { dont_link_with, extension:native, file:output_test.native, link, native, ocaml, program, quiet }
 /usr/local/bin/ocamlopt.opt ast.cmx parser.cmx scanner.cmx output_test.cmx -o output_test.native
 # Compilation successful.

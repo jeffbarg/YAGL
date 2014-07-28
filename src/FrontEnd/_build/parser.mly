@@ -4,7 +4,7 @@
 (*  let symbol_table:(string, string) Hashtbl.t = Hashtbl.empty *)
 %}
 
-%token LEFT_PAREN RIGHT_PAREN LEFT_BRACE RIGHT_BRACE LEFT_BRACKET RIGHT_BRACKET COMMA COLON NEWLINE EOF
+%token LEFT_PAREN RIGHT_PAREN LEFT_BRACE RIGHT_BRACE LEFT_BRACKET RIGHT_BRACKET COMMA COLON NEWLINE EOF ASSN_EQUAL
 
 %token <string> IDENT STRING QUAL KEYWORD SIMPLE_STMT
 
@@ -12,11 +12,18 @@
 
 %token <int> INT 
 
-%start expr
-%type <Ast.expr> expr
+%start prog
+%type <Ast.expr> prog
 
 %%
 
-expr:
-    | IDENT LEFT_PAREN RIGHT_PAREN { print_endline "double check "; FuncCall("hello")}
+prog:
+    | IDENT LEFT_PAREN RIGHT_PAREN { print_endline $1; FuncCall("any string")}
+    | LEFT_BRACE RIGHT_BRACE { print_endline "we got some braces"; FuncCall("some bs") }
+
+
   
+
+
+
+

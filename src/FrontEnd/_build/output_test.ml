@@ -6,7 +6,7 @@ let main () =
     else stdin 
   in 
   let lexbuf = Lexing.from_channel cin in  
-  Parser.expr Scanner.main_entry lexbuf
+  Parser.prog Scanner.main_entry lexbuf
 (* since there are no printfs in the actions, 
    this won't give anything meaningful right now *)
 let _ = Printexc.print main () 
