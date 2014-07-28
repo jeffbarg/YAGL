@@ -35,7 +35,7 @@ rule main_entry = parse
       then open_in Sys.argv.(1)
       else stdin 
     in 
-    let lexbuf = Lexing.from_channel cin in 
+    let lexbuf = Lexing.from_channel cin in  
     main_entry lexbuf
 (* since there are no printfs in the actions, 
    this won't give anything meaningful right now *)

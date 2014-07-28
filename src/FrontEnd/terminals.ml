@@ -3,8 +3,8 @@ type tokens = LEFT_PAREN
 	    | IDENT of string 
 	    | OPER of char 
 	    | ARRAY of tokens array 
-(* Still might need to refactor this into something more 
-   efficient *)
+	    (* Still might need to refactor this into 
+               something more efficient *)
 	    | DICT of (int * string) list 
 	    | STRING of string 
 	    | QUAL of string 
@@ -17,7 +17,8 @@ type tokens = LEFT_PAREN
 	    | COMMA 
 	    | PARAMETERS of (tokens * tokens) array 
 	    | COLON 
-	    | Simple_stmt of string 
+	    (* Not sure if we need to do this? *)
+	    | SIMPLE_STMT of string 
 	    | NEWLINE
 	    | EOF 
 
