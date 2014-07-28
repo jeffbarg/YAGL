@@ -1,14 +1,3 @@
-(* type tokens = IDENT of string  *)
-(* 	    | OPER of char  *)
-(* 	    | ARRAY of tokens array  *)
-(* 	    | DICT of (int * string) list  *)
-(* 	    | STRING of string  *)
-(* 	    | QUAL of string  *)
-(* 	    | KEYWORD of string  *)
-(* 	    | INT of int  *)
-(* 	    | PARAMETERS of (tokens * tokens) array  *)
-(* 	    | SIMPLE_STMT of string  *)
-
 type operator = Add 
 	      | Mult 
 	      | Sub 
@@ -16,5 +5,11 @@ type operator = Add
 
 type variable = Variable of string 
 
+type parameters = Params of expr array
+
+type assign = Assn of variable * expr 
+
 type expr = Binop of expr * operator * expr 
-	  | Assn of variable * expr 
+	  | FuncCall of variable * parameters
+
+

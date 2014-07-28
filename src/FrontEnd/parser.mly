@@ -16,9 +16,9 @@
 %%
 
 prog:
-  | IDENT;LEFT_PAREN;PARAMETERS;RIGHT_PAREN { //something w/function calls} 
-  | LEFT_BRACE; stmts = compound_stmts; RIGHT_BRACE { something w/ cmpd statemtns } 
-  | LEFT_BRACKET; v1 = array_values; RIGHT_BRACKET { //something to do with arrays } 
+  | IDENT;LEFT_PAREN;PARAMETERS;RIGHT_PAREN         { } 
+  | LEFT_BRACE; stmts = compound_stmts; RIGHT_BRACE { }
+  | LEFT_BRACKET; v1 = array_values; RIGHT_BRACKET  { }
   | i = INT { INT i } 
   | s = STRING { String s } 
 
@@ -27,4 +27,4 @@ array_values:
   | 
 
 compound_stmts:
-  | 
+  | {}

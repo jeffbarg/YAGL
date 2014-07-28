@@ -4,7 +4,7 @@ scanner.ml:scanner.mll parser.ml
 parser.ml: parser.mly ast.cmo
 	menhir parser.mly
 
-ast.cmo:ast.mli
+ast.cmo:ast.ml
 	ocamlc -c ast.mli
 
 # if you just do make, then only the first item in the file
