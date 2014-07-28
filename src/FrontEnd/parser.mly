@@ -17,8 +17,8 @@
 %%
 
 prog:
-  | IDENT;LEFT_PAREN;Ast.Params;RIGHT_PAREN             { } 
-  | LEFT_BRACE; stmts = compound_stmts; RIGHT_BRACE { }
+  | IDENT;LEFT_PAREN;parameters;RIGHT_PAREN         { } 
+  | LEFT_BRACE; stmts = compd_statm; RIGHT_BRACE { }
   | LEFT_BRACKET; v1 = array_values; RIGHT_BRACKET  { }
   | i = INT { INT i } 
   | s = STRING { String s } 
