@@ -12,11 +12,12 @@
 %token <int> INT 
 
 %start prog
+%type <Ast.expr> prog
 
 %%
 
 prog:
-  | IDENT;LEFT_PAREN;PARAMETERS;RIGHT_PAREN         { } 
+  | IDENT;LEFT_PAREN;Ast.Params;RIGHT_PAREN             { } 
   | LEFT_BRACE; stmts = compound_stmts; RIGHT_BRACE { }
   | LEFT_BRACKET; v1 = array_values; RIGHT_BRACKET  { }
   | i = INT { INT i } 
@@ -24,7 +25,7 @@ prog:
 
 array_values: 
   | (* nothing to show *) { [] } 
-  | 
+  |                       { } 
 
 compound_stmts:
   | {}

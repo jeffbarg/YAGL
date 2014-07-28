@@ -1,0 +1,6 @@
+ast.cmo :
+ast.cmx :
+output_test.cmo : scanner.cmo
+output_test.cmx : scanner.cmx
+scanner.cmo :
+scanner.cmx :

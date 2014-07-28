@@ -1,11 +1,17 @@
 scanner.ml:scanner.mll parser.ml
 	ocamllex scanner.mll
 
-parser.ml: parser.mly ast.cmo
+parser.ml: parser.mly 
 	menhir parser.mly
 
 ast.cmo:ast.ml
-	ocamlc -c ast.mli
+	ocamlc -c ast.ml
+
+parser.cmo:parser.ml
+	ocamlc -c parser.ml
+
+scanner.cmo:scanner.ml
+	ocamlc -c scanner.ml
 
 # if you just do make, then only the first item in the file
 # will be done, other wise do make all to set off this all 
@@ -18,8 +24,8 @@ all: scanner.ml
 output_test.cmo:output_test.ml
 	ocamlc -c output_test.ml
 
-test.native:output_test.cmo scanner.cmo parser.cmo
-	ocamlc -o test.native parser.cmo scanner.cmo output_test.cmo
+test_:output_test.cmo scanner.cmo parser.cmo
+	ocamlc -o test parser.cmo scanner.cmo output_test.cmo
 
 test: test.native
 	@echo example.yagl | test.native
