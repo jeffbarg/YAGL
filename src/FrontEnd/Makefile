@@ -24,9 +24,6 @@ all: scanner.ml
 output_test.cmo:output_test.ml
 	ocamlc -c output_test.ml
 
-test_:output_test.cmo scanner.cmo parser.cmo
+test:output_test.cmo scanner.cmo parser.cmo
 	ocamlc -o test parser.cmo scanner.cmo output_test.cmo
-
-test: test.native
-	@echo example.yagl | test.native
-
+	@echo example.yagl | test
