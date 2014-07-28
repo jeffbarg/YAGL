@@ -15,6 +15,12 @@ ast.cmo:ast.ml
 all: scanner.ml 
 	@echo "Built everything for the front end" 
 
-test:
-	@echo example.yagl | ocaml output_test.ml
+output_test.cmo:output_test.ml
+	ocamlc -c output_test.ml
+
+test.native:output_test.cmo scanner.cmo parser.cmo
+	ocamlc -o test.native parser.cmo scanner.cmo output_test.cmo
+
+test: test.native
+	@echo example.yagl | test.native
 
