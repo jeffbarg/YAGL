@@ -1,36 +1,25 @@
-type types = INT of int 
-	   | ARRAY of types array
-	   (* Maybe refactor to something more efficient? *)
-	   | DICT of (int * string) list
-	   | STRING of string 
-
-type operator = OPER of char 
-type keyword  = KEYWORD of string 
-
-(* refactor this, split out the ( ) { } into type syntax *)
 type tokens = LEFT_PAREN
 	    | RIGHT_PAREN 
 	    | IDENT of string 
+	    | OPER of char 
+	    | ARRAY of tokens array 
+(* Still might need to refactor this into something more 
+   efficient *)
+	    | DICT of (int * string) list 
+	    | STRING of string 
+	    | QUAL of string 
+	    | KEYWORD of string 
 	    | LEFT_BRACE 
 	    | RIGHT_BRACE
 	    | LEFT_BRACKET
 	    | RIGHT_BRACKET
-	    | STRING of string 
 	    | INT of int 
 	    | COMMA 
-	    | PARAMETERS of (types * types) array 
+	    | PARAMETERS of (tokens * tokens) array 
 	    | COLON 
+	    | Simple_stmt of string 
 	    | NEWLINE
-
-(* not sure how to represent just yet *)
-type statement = Simple of string
-
-type expr = ADD of expr * expr
-	  | MULT of expr * expr 
-	  | DIV of expr * expr 
-	  | SUB of expr * expr 
-	  | CALL of 
-
+	    | EOF 
 
 (* type simple_statement *)
 (* Remember that tokens just make groupings, 
@@ -46,5 +35,3 @@ type expr = ADD of expr * expr
    
    [KEYWORD("func"); IDENT("make_graph");LEFT_PAREN; PARAMETERS; 
     LEFT_BRACE; need to come back *)
-    
-   
