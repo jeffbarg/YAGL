@@ -1,31 +1,27 @@
-type token = LEFT_PAREN
-	   | RIGHT_PAREN 
-	   | IDENT of string 
-	   | LEFT_BRACE 
-	   | RIGHT_BRACE
-	   | LEFT_BRACKET
-	   | RIGHT_BRACKET
-	   | STRING of string 
-	   | INT of int 
-	   | COMMA 
-	   | KEYWORD of keyword
-	   | PARAMETERS of (types * types) array 
-	   | COLON 
-	   (* Is this even necessary? *)
-	   | COMMENT 
-	   | NEWLINE
-
 type types = INT of int 
 	   | ARRAY of types array
 	   (* Maybe refactor to something more efficient? *)
 	   | DICT of (int * string) list
 	   | STRING of string 
 
-(* This needs work on like what makes up the blocks *)
-type keyword = FOR 
-	     | IF 
-	     | ELIF
-	     | ELSE 
+type operator = OPER of char 
+type keyword  = KEYWORD of string 
+
+(* refactor this, split out the ( ) { } into type syntax *)
+type tokens = LEFT_PAREN
+	    | RIGHT_PAREN 
+	    | IDENT of string 
+	    | LEFT_BRACE 
+	    | RIGHT_BRACE
+	    | LEFT_BRACKET
+	    | RIGHT_BRACKET
+	    | STRING of string 
+	    | INT of int 
+	    | COMMA 
+	    | PARAMETERS of (types * types) array 
+	    | COLON 
+	    | NEWLINE
+
 (* not sure how to represent just yet *)
 type statement = Simple of string
 

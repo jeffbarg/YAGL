@@ -1,0 +1,24 @@
+# This is an example of a YAGL program. 
+# There is one global object always available, the Graph object that you 
+# don't have a handle on, but will manipulate with makeGraph
+Array myJson = jsonArray("/path/to/json/data.json")
+
+#Could also do jsonDict which returns Dict 
+# So myGraph is a <svg> initialized with the width and height. These parameters
+# are mandatory. 
+# funcs all return void since they are just for algorithmically maniuplating the graph. 
+func createGraph()
+{
+    for (Dict item in myJson)
+    {	# Assuming everything in item["foo"] is string 
+        addRect(item["xCoord"], item["yCoord"], item["height"], item["width"])
+	#OR!
+	addCircle(item["cx"], item["cy"], item["r"]
+    }
+    title("YAET, Yet Another Example Title")
+}
+    
+createGraph()
+# Need to call makeGraph for the graph to be actually made
+makeGraph(<nameOfFile>, <width>, <height>)
+
