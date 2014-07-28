@@ -1,14 +1,20 @@
-type operator_token = Add of char
-		    | Mult of char
-		    | 
+(* type tokens = IDENT of string  *)
+(* 	    | OPER of char  *)
+(* 	    | ARRAY of tokens array  *)
+(* 	    | DICT of (int * string) list  *)
+(* 	    | STRING of string  *)
+(* 	    | QUAL of string  *)
+(* 	    | KEYWORD of string  *)
+(* 	    | INT of int  *)
+(* 	    | PARAMETERS of (tokens * tokens) array  *)
+(* 	    | SIMPLE_STMT of string  *)
 
-type syntax_token = Left_paren of char
-		  | Right_paren of char
-		  | Left_curly of char
-		  | Right_curly of char
-type stmt = Assignment of 
+type operator = Add 
+	      | Mult 
+	      | Sub 
+	      | Div 
 
-type expr = Bin_op of expr * expr 
+type variable = Variable of string 
 
-
-type func_token = Function of string * expr array
+type expr = Binop of expr * operator * expr 
+	  | Assn of variable * expr 
