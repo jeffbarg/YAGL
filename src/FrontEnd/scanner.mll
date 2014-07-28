@@ -17,8 +17,9 @@ rule main_entry = parse
   | ')'                                                     { RIGHT_PAREN }
   | '{'                                                     { LEFT_BRACE } 
   | '}'                                                     { RIGHT_BRACE }
+  | ['#']['A'-'Z' 'a'-'z' '0'-'9' '_']*                     { COMMENT }
   | '\n'                                                    { NEWLINE } 
   | "for" | "while" | "func" | "if" | "elif" | "else" as kw { KEYWORD(kw) } 
-  | "Array" | "Dict" | "Int" as qual                        { QUAL(qual) }  
+  | "Array" | "Dict" | "Int" as qual                        { QUAL(qual) }
   | eof                                                     { EOF }
 
