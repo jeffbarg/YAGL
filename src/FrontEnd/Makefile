@@ -16,5 +16,5 @@ all: scanner.ml
 	@echo "Built everything for the front end" 
 
 test:
-	@echo example.yagl | output_test.ml
+	@echo example.yagl | ocaml output_test.ml
 
