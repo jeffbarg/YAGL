@@ -6,27 +6,55 @@ let digit = ['0'-'9']
 let ident = ['a'-'z']['a'-'z']*
 
 rule main_entry = parse
-  | digit+ as number                                        { INT(int_of_string number) }
-  | ident as ident                                          { IDENT(ident) }
   | [' ' '\r' '\t']                                         { main_entry lexbuf } 
-  | '+' | '-' | '/' | '*' as op                             { OPER(op) }
+  | ['#']                     { comment lexbuf }
+
+  | '+' { PLUS }
+  | '-' { MINUS }
+  | '/' { DIVIDE }
+  | '*' { TIMES }
+
   | ','                                                     { COMMA }
   | '['                                                     { LEFT_BRACKET } 
   | ']'                                                     { RIGHT_BRACKET } 
   | '('                                                     { LEFT_PAREN }
-  (* Need to add the relational operators and the logical operators && || *)
   | ')'                                                     { RIGHT_PAREN }
+
+  | "==" { EQ }
+  | "!=" { NEQ }
+  | "<=" { LEQ }
+  | ">=" { GEQ }
+  | "<" { LT }
+  | ">" { GT }
+  | "||" { OR }
+  | "&&" { AND }
+
   | '='                                                     { ASSN_EQUAL } 
   | '{'                                                     { LEFT_BRACE } 
   | '}'                                                     { RIGHT_BRACE }
-  | ['#']['A'-'Z' 'a'-'z' '0'-'9' '_']*                     { main_entry lexbuf }
   | '\n'                                                    { NEWLINE } 
-  | "for" | "while" | "func" | "if" | "elif" | "else" as kw { KEYWORD(kw) } 
-  | "Array" | "Dict" | "Int" as qual                        { QUAL(qual) }
+
+
+  | "if" { IF }
+  | "else"                                                   { ELSE } 
+  | "for"                                                   { FOR } 
+  | "while"                                                   { WHILE } 
+
+  | "break"                                                   { BREAK } 
+  | "return" { RETURN }
+
+  | "Array" { ARRAY }
+  | "Dict" { DICT }
+  | "Int" { INT }
+  | "String" { STRING }
+
   | eof                                                     { EOF }
+  | ident as ident                                          { IDENT(ident) }
+  | digit+ as number                                        { INTLITERAL(int_of_string number) }
+  
+  (* need string literals *)
+  
 
-
-
-
-
-
+and comment = parse
+  | ['\n'] { main_entry lexbuf }
+  | _ { comment lexbuf }
