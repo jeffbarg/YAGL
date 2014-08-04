@@ -1,5 +1,10 @@
-# This is the shared repository for the YAGL programming language. 
+You can test out this by running these:
 
-YAGL stands for *Yet another graphics language*. 
+(Do not rely on the make file just yet, 
+ just use ocamlbuild)
 
-
+ocamlbuild output_test.native
+#then
+echo "hello()" | ./output_test.native
+#or 
+echo "{}" | ./output_test.native
