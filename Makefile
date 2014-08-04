@@ -18,7 +18,7 @@ parser.ml parser.mli:parser.mly
 .PHONY:clean 
 
 clean:
-	rm -rf scanner.ml *.mli .*~ *.cmo *.cmi *.out 
+	rm -rf scanner.ml parser.ml *.mli *.*~* *.cmo *.cmi *.out 
 	@echo "Finished cleaning up files"
 
 

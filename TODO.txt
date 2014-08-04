@@ -1,0 +1,2 @@
+1) Bring back the nested folders, used to be a frontend/backend but 
+it made the makefile more complicated, so just made it all flat. 
