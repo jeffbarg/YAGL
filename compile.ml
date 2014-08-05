@@ -32,9 +32,11 @@ let translate (globals, functions, stmts) =
     StringMap.add "addCircle" (-2) built_in_functions in
   let built_in_functions =
     StringMap.add "addRect"   (-3) built_in_functions in
+  let built_in_functions =
+    StringMap.add "title"     (-4) built_in_functions in
 
   let function_indexes = string_map_pairs built_in_functions
-    (enum 1 1 (List.map (fun f -> f.fname) functions)) in
+    (enum 1 4 (List.map (fun f -> f.fname) functions)) in
   
   (* Translate an AST function to a list of bytecode statements *)
   let translate env fdecl =
@@ -72,17 +74,17 @@ let rec expr = function
 (* Translate a statement *)
 in let rec stmt = function
   Block sl -> List.concat (List.map stmt sl)
-    | Expr e -> expr e @ [Drp] (* Discard result *)
-    | Return e -> expr e @ [Rts num_formals]
-    | If (p, t, f) -> let t' = stmt t and f' = stmt f in
-  expr p @ [Beq(2 + List.length t')] @
-  t' @ [Bra(1 + List.length f')] @ f'
-    | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
-      stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
-    | While (e, b) ->
-      let b' = stmt b and e' = expr e in
-      [Bra (1+ List.length b')] @ b' @ e' @
-      [Bne (-(List.length b' + List.length e'))]
+  | Expr e -> expr e @ [Drp] (* Discard result *)
+  | Return e -> expr e @ [Rts num_formals]
+  | If (p, t, f) -> let t' = stmt t and f' = stmt f in
+    expr p @ [Beq(2 + List.length t')] @
+    t' @ [Bra(1 + List.length f')] @ f'
+  | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
+    stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
+  | While (e, b) ->
+    let b' = stmt b and e' = expr e in
+    [Bra (1+ List.length b')] @ b' @ e' @
+    [Bne (-(List.length b' + List.length e'))]
 
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)
@@ -95,8 +97,7 @@ in let env = { function_index = function_indexes;
 
 (* Code executed to start the program: Jsr main; halt *)
 let entry_function = try
-  [Jsr (StringMap.find "main" function_indexes); Hlt]
-  with Not_found -> raise (Failure ("no \"main\" function"))
+  (List.fold_left (fun ls, s -> ls @ (stmt s)) [] stmts)::Hlt
 in
 
 (* Compile the functions *)
