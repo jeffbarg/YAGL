@@ -24,11 +24,13 @@ type stmt = Block of stmt list
 	  | While of expr * stmt 
 	  | Break
 
+
 type func_defin = {fname:string;
 		  formals:string * string list;
 		  locals:var_defin list;
 		  body:stmt list}
 type yagl_program = var_defin list * func_defin list * stmt list 
+
 (* Hideous but that's okay *)
 let first_elem = function (first, second, third) ->  first
 let second_elem = function (first, second, third) -> second
