@@ -1,63 +1,45 @@
 %{ open Ast %}
 
-%token LEFT_PAREN RIGHT_PAREN LEFT_BRACE RIGHT_BRACE 
-%token LEFT_BRACKET RIGHT_BRACKET COMMA 
-%token NEWLINE EOF ASSN_EQUAL FUNC 
-%token <string> IDENT STRING QUAL KEYWORD SIMPLE_STMT
+%token PLUS MINUS DIVIDE TIMES COMMA LEFT_BRACKET RIGHT_BRACKET
+%token LEFT_PAREN RIGHT_PAREN EQ NEQ LEQ GEQ LT GT OR AND
+%token ASSN_EQUAL LEFT_BRACE RIGHT_BRACE NEWLINE 
+%token FUNC IF ELSE FOR WHILE BREAK RETURN EOF
 %token <int> INTLITERAL 
+%token <string> IDENT QUAL 
 
 
 %nonassoc ELSE
 
-%start yagl_prog 
-%type <Ast.program> yagl_prog
+%start yagl_program 
+%type <Ast.yagl_program> yagl_program 
 
 %%
 
-yagl_prog:
-  /* Making assumption that the first list is for variables 
-     and the second is for function declarations, note that many 
-     of the rules are left recursive 		*/
-  /* Nothing right now */     { ([], []) }
- | yagl_prog var_declaration  { ($2 :: fst $1), snd $1 }
- | yagl_prog func_declaration { fst $1, ($2 :: snd $1) }
+yagl_program:
+/* This tuple represents the AST for the entire yagl program. 
+   The first list is the variable declaration list, the second is the function declaration list 
+   and the last one is top level expressions list */ 											   
+ | /*no code */ { ([], [], []) };
 
-var_declaration:
-  QUAL IDENT ASSN_EQUAL expr { var_decl{qual=$1;
-					ident=$2;
-					rhs=$4}}
+expression:
+ | /* no expression */                                     { NoExpr }
+ | id = IDENT; LEFT_BRACKET; e = expression ;RIGHT_BRACKET { ArrayIndex(id, e) }
+ | i = INTLITERAL                                          { Literal(i)}
+ | id = IDENT                                              { Id(id) }
+ | e1 = expression; PLUS; e2 = expression                  { BinOp(e1, Add, e2) }
+ | e1 = expression; MINUS; e2 = expression                 { BinOp(e1, Sub, e2) }
+ | e1 = expression; DIVIDE; e2 = expression                { BinOp(e1, Div, e2) }
+ | e1 = expression; TIMES; e2 = expression                 { BinOp(e1, Mult, e2) }
+ | e1 = expression; EQ; e2 = expression                    { BinOp(e1, Equal, e2) }
+ | e1 = expression; NEQ; e2 = expression                   { BinOp(e1, Neq, e2) }
+ | e1 = expression; LEQ; e2 = expression                   { BinOp(e1, Leq, e2) } 
+ | e1 = expression; GEQ; e2 = expression                   { BinOp(e1, Geq, e2) }
+ | e1 = expression; LT; e2 = expression                    { BinOp(e1, LessThan, e2) }
+ | e1 = expression; GT; e2 = expression                    { BinOp(e1, GreaterThan, e2) }
+ | e1 = expression; AND; e2 = expression                   { BinOp(e1, LogicalAnd, e2) }
+ | e1 = expression; OR; e2 = expression                    { BinOp(e1, LogicalOr, e2) }
+ | FUNC; id = IDENT; LEFT_PAREN; args = func_arguments; RIGHT_PAREN { FuncCall(id, args) };
 
-func_declaration:
-  FUNC IDENT LEFT_PAREN formal_opts RIGHT_PAREN LEFT_BRACE stmt_list RIGHT_BRACE
-  {{fname=$2;
-    formals=$4;
-    locals=["123"];
-    body=[If(1)]}}
-
-stmt_list:
-   RETURN expr { Return($2) }
- | IF LEFT_PAREN expr RIGHT_PARENT LEFT_BRACE stmt_list RIGHT_BRACE { If($3,  }
-
-formal_opts:
-  /* No arguments */ { [] } 
- | formal_list     { List.rev $1 } 
-
-formal_list:
-   IDENT { [$1]}
- | formal_list COMMA IDENT { $3 :: $1 } 
-
-expr:
-  IDENT LEFT_BRACKET expr RIGHT_BRACKET    { ArrayIndex($1, $3) }
-| IDENT LEFT_PAREN actual_opts RIGHT_PAREN { FuncCall($1, $3)   } 
-
-actual_opts:
-  /* no arguments */  { [] }
- | actuals_list { List.rev $1 } 
-
-actuals_list:
-  expr { [$1] }
-| actuals_list COMMA IDENT { $3 :: $1 } 
-
-expression_opt:
-/* nothing */ { } 
-| expr { $1 } 
+func_arguments:
+ | /* No arguments passed to a function */      { [] }
+ | arg_list = separated_list(COMMA, expression) { arg_list };

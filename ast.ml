@@ -4,10 +4,12 @@ type operator = Add
               | Div
               | Neq
               | Equal
-              | Less
+              | LessThan
               | Leq
               | Geq
-              | Greater
+              | GreaterThan
+	      | LogicalAnd
+	      | LogicalOr
 
 type qual = Array 
 	  | Dict 
@@ -24,7 +26,7 @@ type expr = Literal of int
 type var_decl = {qual:qual;
 		 ident:string;
 		 rhs:expr}
-		 
+(* Note that expressions are a type of statement *)		 
 type stmt = Block of stmt list
 	  | Expr of expr 
 	  | Return of expr
@@ -37,9 +39,5 @@ type func_decl = {fname:string;
 		  locals:string list;
 		  body:stmt list}
 
-type program = string list * func_decl list 
+type yagl_program = var_decl list * func_decl list * expr list 
 
-(* let rec string_of_expr = function  *)
-(*   | Literal(a) -> string_of_int a *)
-(*   | Id(s) -> s *)
-(*   | BinOp(e1, o, e2) ->  *)

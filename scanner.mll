@@ -5,7 +5,7 @@ let ident = ['a'-'z']['a'-'z']*
 
 rule main_entry = parse
   | [' ' '\r' '\t']           { main_entry lexbuf } 
-  | ['#']                     { comment lexbuf }
+  | '#'                       { comment lexbuf }
   | '+'                       { PLUS }
   | '-'                       { MINUS }
   | '/'                       { DIVIDE }

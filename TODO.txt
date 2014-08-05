@@ -1,2 +1,4 @@
-1) Bring back the nested folders, used to be a frontend/backend but 
-it made the makefile more complicated, so just made it all flat. 
+1) Have the Examples shell script work. 
+
+2) Make a top level shell script that will call make install, then take as argument the file say someProg.yagl, check if the yaglc.native exists
+   if not, make it, and use it on the someProg.yagl, then call gcc on that someProg.c file.
