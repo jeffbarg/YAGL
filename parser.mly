@@ -41,7 +41,7 @@ function_defin:
  | FUNC; i = IDENT; LEFT_PAREN; ps = formals_opts; RIGHT_PAREN; locals = variable_defin_list; body = statement {{fname=i;
 								 					         formals=ps;
 								 						 locals=locals;
-								  						 body=Break}}
+								  						 body=body}}
 formals_opts:
  | (* No arguments needed for this function *) { [] } 
  | l = formal_list { List.rev l } 
