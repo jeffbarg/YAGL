@@ -1,0 +1,67 @@
+State 0:
+yagl_program' -> . yagl_program [ # ]
+-- On yagl_program shift to state 1
+-- On QUAL reduce production yagl_program -> 
+-- On # reduce production yagl_program -> 
+
+State 1:
+yagl_program' -> yagl_program . [ # ]
+yagl_program -> yagl_program . variable_decl [ QUAL # ]
+-- On QUAL shift to state 2
+-- On variable_decl shift to state 6
+-- On # accept yagl_program
+
+State 2:
+variable_decl -> QUAL . IDENT ASSN_EQUAL expression [ QUAL # ]
+-- On IDENT shift to state 3
+
+State 3:
+variable_decl -> QUAL IDENT . ASSN_EQUAL expression [ QUAL # ]
+-- On ASSN_EQUAL shift to state 4
+
+State 4:
+variable_decl -> QUAL IDENT ASSN_EQUAL . expression [ QUAL # ]
+-- On expression shift to state 5
+-- On QUAL reduce production expression -> 
+-- On # reduce production expression -> 
+
+State 5:
+variable_decl -> QUAL IDENT ASSN_EQUAL expression . [ QUAL # ]
+-- On QUAL reduce production variable_decl -> QUAL IDENT ASSN_EQUAL expression 
+-- On # reduce production variable_decl -> QUAL IDENT ASSN_EQUAL expression 
+
+State 6:
+yagl_program -> yagl_program variable_decl . [ QUAL # ]
+-- On QUAL reduce production yagl_program -> yagl_program variable_decl 
+-- On # reduce production yagl_program -> yagl_program variable_decl 
+
+State 0 has an end-of-stream conflict. There is a tension between
+(1) reducing production yagl_program -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is QUAL,
+which would require some other action.
+
+State 1 has an end-of-stream conflict. There is a tension between
+(1) accepting yagl_program
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is QUAL,
+which would require some other action.
+
+State 4 has an end-of-stream conflict. There is a tension between
+(1) reducing production expression -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is QUAL,
+which would require some other action.
+
+State 5 has an end-of-stream conflict. There is a tension between
+(1) reducing production variable_decl -> QUAL IDENT ASSN_EQUAL expression 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is QUAL,
+which would require some other action.
+
+State 6 has an end-of-stream conflict. There is a tension between
+(1) reducing production yagl_program -> yagl_program variable_decl 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is QUAL,
+which would require some other action.
+
