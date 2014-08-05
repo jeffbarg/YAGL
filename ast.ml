@@ -31,13 +31,16 @@ type stmt = Block of stmt list
 	  | While of expr * stmt 
 	  | Break
 
-type func_decl = {fname:string;
+type func_decl = {
+      fname:string;
 		  formals:(string * string) list;
-(* perhaps leave as list of var declarations?*)
 		  locals:var_decl list;
-		  body:stmt list}
+		  body:stmt list
+    }
+
 (*type yagl_program = var_decl list * func_decl list * stmt list *)
-type yagl_program = var_decl list * int list * int list
+type yagl_program = var_decl list * stmt list * int list
+
 (* Hideous but that's okay *)
 let first_elem = function (first, second, third) ->  first
 let second_elem = function (first, second, third) -> second
