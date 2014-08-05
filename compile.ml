@@ -96,8 +96,8 @@ in let env = { function_index = function_indexes;
                local_index = StringMap.empty } in
 
 (* Code executed to start the program: Jsr main; halt *)
-let entry_function = try
-  (List.fold_left (fun ls, s -> ls @ (stmt s)) [] stmts)::Hlt
+let entry_function =
+  ((List.fold_left (fun ls s -> ls @ (stmt s)) [] stmts)::Hlt) 
 in
 
 (* Compile the functions *)
