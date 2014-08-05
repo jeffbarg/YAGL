@@ -39,9 +39,9 @@ variable_defin_list:
 
 function_defin:
  | FUNC; i = IDENT; LEFT_PAREN; ps = formals_opts; RIGHT_PAREN; locals = variable_defin_list; body = statement {{fname=i;
-								 					           formals=[("TEST", "TEST")];
-								 						   locals=locals;
-								  						   body=Break}}
+								 					         formals=ps;
+								 						 locals=locals;
+								  						 body=Break}}
 formals_opts:
  | (* No arguments needed for this function *) { [] } 
  | l = formal_list { List.rev l } 

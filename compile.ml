@@ -1,5 +1,7 @@
 open Ast
 open Bytecode
+
+
 module StringMap = Map.Make(String)
 
 (* Symbol table: Information about all the names in scope *)
