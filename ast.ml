@@ -26,7 +26,7 @@ type stmt = Block of stmt list
 
 
 type func_defin = {fname:string;
-		  formals:string * string list;
+		  formals:(string * string) list;
 		  locals:var_defin list;
 		  body:stmt list}
 type yagl_program = var_defin list * func_defin list * stmt list 

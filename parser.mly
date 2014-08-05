@@ -5,8 +5,7 @@
 %token ASSN_EQUAL LEFT_BRACE RIGHT_BRACE NEWLINE IN
 %token FUNC IF ELSE FOR WHILE BREAK RETURN EOF NOELSE
 %token <int> INTLITERAL 
-%token <string> IDENT 
-%token <string> QUAL
+%token <string> IDENT QUAL
 
 %nonassoc NOELSE 
 %nonassoc ELSE 
@@ -38,10 +37,10 @@ variable_defin_list:
  | l = variable_defin_list; v = variable_defin { v :: l }
 
 function_defin:
- | FUNC; i = IDENT; LEFT_PAREN; ps = formals_opts; RIGHT_PAREN; locals = variable_defin_list; body = statement {{fname=i;
-								 					         formals=ps;
-								 						 locals=locals;
-								  						 body=body}}
+ | FUNC; i = IDENT; LEFT_PAREN; ps = formals_opts; RIGHT_PAREN; locals = variable_defin_list; body = statement_list {{fname=i;
+								 					              formals=ps;
+								 						      locals=List.rev locals;
+								  						      body=List.rev body}}
 formals_opts:
  | (* No arguments needed for this function *) { [] } 
  | l = formal_list { List.rev l } 
@@ -80,5 +79,4 @@ statement:
  | IF; LEFT_PAREN; e = expression; RIGHT_PAREN; s = statement; %prec NOELSE                { If(e, s, Block([])) }
  | IF; LEFT_PAREN; e = expression; RIGHT_PAREN; s1 = statement; ELSE; s2 = statement { If(e, s1, s2) }
  | FOR; q = QUAL; id = IDENT; IN; d = IDENT; l = statement                           { For(q, id, d, l) }
-
 
