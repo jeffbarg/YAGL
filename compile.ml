@@ -44,9 +44,11 @@ let translate (globals, functions) =
     and local_offsets = enum 1 1 fdecl.locals
     and formal_offsets = enum (-1) (-2) fdecl.formals in
     let env = { env with local_index = string_map_pairs
-    StringMap.empty (local_offsets @ formal_offsets) } in(* Translate an expression *)
+    StringMap.empty (local_offsets @ formal_offsets) } in
 
 
+
+(* Translate an expression *) 
 let rec expr = function
   Literal i -> [Lit i]
   | Id s ->
@@ -78,7 +80,7 @@ in let rec stmt = function
   expr p @ [Beq(2 + List.length t')] @
   t' @ [Bra(1 + List.length f')] @ f'
     | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
-  stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
+      stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
     | While (e, b) ->
       let b' = stmt b and e' = expr e in
       [Bra (1+ List.length b')] @ b' @ e' @
@@ -86,8 +88,8 @@ in let rec stmt = function
 
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)
-stmt (Block fdecl.body) @ (* Body *)
-[Lit 0; Rts num_formals] (* Default = return 0 *)
+  stmt (Block fdecl.body) @ (* Body *)
+  [Lit 0; Rts num_formals] (* Default = return 0 *)
 
 in let env = { function_index = function_indexes;
                global_index = global_indexes;
