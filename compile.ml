@@ -2,13 +2,6 @@ open Ast
 open Bytecode
 module StringMap = Map.Make(String)
 
-(* Not sure, should we go with three address code or byte code? *)
-(* Should do the top_level_exprs first, *)
-let translate (var_decls, func_decls, top_level_exprs) = 
-
-(* Tons of code to go here, but final result is....*) 
-{text=Array.of_list (*something *) } 
-
 (* Symbol table: Information about all the names in scope *)
 type env = {
   function_index : int StringMap.t; (* Index for each function *)
@@ -23,16 +16,26 @@ let rec enum stride n = function
 
 (* string_map_pairs:StringMap 'a -> (int * 'a) list -> StringMap 'a *)
 let string_map_pairs map pairs =
-  List.fold_left (fun m (i, n) -> StringMap.add n i m) map pairs(** Translate a program in AST form into a bytecode program. Throw an exception if something is wrong, e.g., a reference to an unknown variable or function *)
+  List.fold_left (fun m (i, n) -> StringMap.add n i m) map pairs 
 
+
+(** Translate a program in AST form into a bytecode program.
+Throw an exception if something is wrong, e.g., a reference to an unknown variable or function *)
 let translate (globals, functions) =
   (* Allocate "addresses" for each global variable *)
   let global_indexes = string_map_pairs StringMap.empty (enum 1 0 globals) in
+  
   (* Assign indexes to function names; built-in "print" is special *)
   let built_in_functions = 
-    StringMap.add "print" (-1) StringMap.empty in
+    StringMap.add "print"     (-1) StringMap.empty in
+  let built_in_functions =
+    StringMap.add "addCircle" (-2) built_in_functions in
+  let built_in_functions =
+    StringMap.add "addRect"   (-3) built_in_functions in
+
   let function_indexes = string_map_pairs built_in_functions
-  (enum 1 1 (List.map (fun f -> f.fname) functions)) in
+    (enum 1 1 (List.map (fun f -> f.fname) functions)) in
+  
   (* Translate an AST function to a list of bytecode statements *)
   let translate env fdecl =
     (* Bookkeeping: FP offsets for locals and arguments *)
@@ -67,19 +70,19 @@ let rec expr = function
   | Noexpr -> []
 
 (* Translate a statement *)
-  in let rec stmt = function
-    Block sl -> List.concat (List.map stmt sl)
-      | Expr e -> expr e @ [Drp] (* Discard result *)
-      | Return e -> expr e @ [Rts num_formals]
-      | If (p, t, f) -> let t' = stmt t and f' = stmt f in
-    expr p @ [Beq(2 + List.length t')] @
-    t' @ [Bra(1 + List.length f')] @ f'
-      | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
-    stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
-      | While (e, b) ->
-        let b' = stmt b and e' = expr e in
-        [Bra (1+ List.length b')] @ b' @ e' @
-        [Bne (-(List.length b' + List.length e'))]
+in let rec stmt = function
+  Block sl -> List.concat (List.map stmt sl)
+    | Expr e -> expr e @ [Drp] (* Discard result *)
+    | Return e -> expr e @ [Rts num_formals]
+    | If (p, t, f) -> let t' = stmt t and f' = stmt f in
+  expr p @ [Beq(2 + List.length t')] @
+  t' @ [Bra(1 + List.length f')] @ f'
+    | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
+  stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
+    | While (e, b) ->
+      let b' = stmt b and e' = expr e in
+      [Bra (1+ List.length b')] @ b' @ e' @
+      [Bne (-(List.length b' + List.length e'))]
 
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)
