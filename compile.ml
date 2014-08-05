@@ -21,7 +21,7 @@ let string_map_pairs map pairs =
 
 (** Translate a program in AST form into a bytecode program.
 Throw an exception if something is wrong, e.g., a reference to an unknown variable or function *)
-let translate (globals, functions) =
+let translate (globals, functions, stmts) = 
   (* Allocate "addresses" for each global variable *)
   let global_indexes = string_map_pairs StringMap.empty (enum 1 0 globals) in
   
@@ -45,8 +45,6 @@ let translate (globals, functions) =
     and formal_offsets = enum (-1) (-2) fdecl.formals in
     let env = { env with local_index = string_map_pairs
     StringMap.empty (local_offsets @ formal_offsets) } in
-
-
 
 (* Translate an expression *) 
 let rec expr = function

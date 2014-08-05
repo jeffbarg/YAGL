@@ -39,7 +39,7 @@ type func_decl = {
     }
 
 (*type yagl_program = var_decl list * func_decl list * stmt list *)
-type yagl_program = var_decl list * stmt list * int list
+type yagl_program = var_decl list * func_decl list * stmt list
 
 (* Hideous but that's okay *)
 let first_elem = function (first, second, third) ->  first
