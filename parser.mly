@@ -36,7 +36,7 @@ variable_defin_list:
  | (* No defined variables *)  { [] } 
  | l = variable_defin_list; v = variable_defin { v :: l }
 
-function_defin:
+function_defin: (* Possibly some issues here *)
  | FUNC; i = IDENT; LEFT_PAREN; ps = formals_opts; RIGHT_PAREN; locals = variable_defin_list; body = statement_list {{fname=i;
 								 					              formals=ps;
 								 						      locals=List.rev locals;
