@@ -31,6 +31,7 @@ rule main_entry = parse
   | "if"                      { IF }
   | "else"                    { ELSE } 
   | "for"                     { FOR } 
+  | "in"                      { IN }
   | "while"                   { WHILE } 
   | "break"                   { BREAK } 
   | "return"                  { RETURN }

@@ -31,13 +31,21 @@ type stmt = Block of stmt list
 	  | Expr of expr 
 	  | Return of expr
 	  | If of expr * stmt 
-	  | For of qual * string * expr * stmt 
+	  | For of qual * string * stmt 
 	  | While of expr * stmt 
+	  | Break
 
 type func_decl = {fname:string;
-		  formals:string list;
-		  locals:string list;
+		  formals:qual * string list;
+(* perhaps leave as list of var declarations?*)
+		  locals:var_decl;
 		  body:stmt list}
 
-type yagl_program = var_decl list * func_decl list * expr list 
+type yagl_program = var_decl list * func_decl list * stmt list 
+
+(* Hideous but that's okay *)
+let first_elem = function (first, second, third) -> first
+let second_elem = function (first, second, third) -> second
+let third_elem = function (first, second, third) -> third 
+  
 
