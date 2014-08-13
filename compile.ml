@@ -41,20 +41,20 @@ let translate (globals, functions) =
   
   (* Translate an AST function to a list of bytecode statements *)
   
-  let translate env fdecl =
-    (* Bookkeeping: FP offsets for locals and arguments *)
-    let num_formals = List.length fdecl.formals
-    and num_locals = List.length fdecl.locals
+let translate env fdecl =
+  (* Bookkeeping: FP offsets for locals and arguments *)
+  let num_formals = List.length fdecl.formals
+  and num_locals = List.length fdecl.locals
 
-    and local_offsets = enum 1 1 (List.map (fun l -> l.id) fdecl.locals)
-    and formal_offsets = enum (-1) (-2) (List.map (fun (q, s) -> s) fdecl.formals) in
-    
-    let env = { 
-      env with
-        local_index =
-          string_map_pairs
-          StringMap.empty (local_offsets @ formal_offsets)
-      } in
+  and local_offsets = enum 1 1 (List.map (fun l -> l.id) fdecl.locals)
+  and formal_offsets = enum (-1) (-2) (List.map (fun (q, s) -> s) fdecl.formals) in
+  
+  let env = { 
+    env with
+      local_index =
+        string_map_pairs
+        StringMap.empty (local_offsets @ formal_offsets)
+    } in
 
 (* Translate an expression *) 
 let rec expr = function
