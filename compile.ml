@@ -1,7 +1,6 @@
 open Ast
 open Bytecode
 
-
 module StringMap = Map.Make(String)
 
 (* Symbol table: Information about all the names in scope *)
@@ -23,11 +22,11 @@ let string_map_pairs map pairs =
 
 (** Translate a program in AST form into a bytecode program.
 Throw an exception if something is wrong, e.g., a reference to an unknown variable or function *)
-let translate (globals, functions, stmts) = 
+let translate (globals, functions) = 
   (* Allocate "addresses" for each global variable *)
-  let global_indexes = string_map_pairs StringMap.empty (enum 1 0 globals) in
+  let global_indexes = string_map_pairs StringMap.empty (enum 1 0 (List.map (fun l -> l.id) globals)) in
   
-  (* Assign indexes to function names; built-in "print" is special *)
+  (* Assign indexes to function names; built-in functions are special *)
   let built_in_functions = 
     StringMap.add "print"     (-1) StringMap.empty in
   let built_in_functions =
@@ -41,18 +40,25 @@ let translate (globals, functions, stmts) =
     (enum 1 4 (List.map (fun f -> f.fname) functions)) in
   
   (* Translate an AST function to a list of bytecode statements *)
+  
   let translate env fdecl =
     (* Bookkeeping: FP offsets for locals and arguments *)
     let num_formals = List.length fdecl.formals
     and num_locals = List.length fdecl.locals
-    and local_offsets = enum 1 1 fdecl.locals
-    and formal_offsets = enum (-1) (-2) fdecl.formals in
-    let env = { env with local_index = string_map_pairs
-    StringMap.empty (local_offsets @ formal_offsets) } in
+
+    and local_offsets = enum 1 1 (List.map (fun l -> l.id) fdecl.locals)
+    and formal_offsets = enum (-1) (-2) (List.map (fun (q, s) -> s) fdecl.formals) in
+    
+    let env = { 
+      env with
+        local_index =
+          string_map_pairs
+          StringMap.empty (local_offsets @ formal_offsets)
+      } in
 
 (* Translate an expression *) 
 let rec expr = function
-  Literal i -> [Lit i]
+  LiteralInt i -> [LitInt i]
   | Id s ->
     (try [Lfp (StringMap.find s env.local_index)]
   with Not_found -> try
@@ -60,12 +66,6 @@ let rec expr = function
   with Not_found ->
     raise (Failure ("undeclared variable " ^ s)))
   | Binop (e1, op, e2) -> expr e1 @ expr e2 @ [Bin op]
-  | Assign (s, e) -> expr e @
-    (try [Sfp (StringMap.find s env.local_index)]
-  with Not_found -> try
-    [Str (StringMap.find s env.global_index)]
-  with Not_found ->
-    raise (Failure ("undeclared variable " ^ s)))
   | Call (fname, actuals) -> (try
     (List.concat (List.map expr (List.rev actuals))) @
     [Jsr (StringMap.find fname env.function_index) ]
@@ -82,7 +82,7 @@ in let rec stmt = function
     expr p @ [Beq(2 + List.length t')] @
     t' @ [Bra(1 + List.length f')] @ f'
   | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
-    stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
+    [](* stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))])) *)
   | While (e, b) ->
     let b' = stmt b and e' = expr e in
     [Bra (1+ List.length b')] @ b' @ e' @
@@ -91,15 +91,16 @@ in let rec stmt = function
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)
   stmt (Block fdecl.body) @ (* Body *)
-  [Lit 0; Rts num_formals] (* Default = return 0 *)
+  [LitInt 0; Rts num_formals] (* Default = return 0 *)
 
 in let env = { function_index = function_indexes;
                global_index = global_indexes;
                local_index = StringMap.empty } in
 
 (* Code executed to start the program: Jsr main; halt *)
-let entry_function =
-  ((List.fold_left (fun ls s -> ls @ (stmt s)) [] stmts)::Hlt) 
+let entry_function = try
+  [Jsr (StringMap.find "main" function_indexes); Hlt]
+  with Not_found -> raise (Failure ("no \"main\" function"))
 in
 
 (* Compile the functions *)

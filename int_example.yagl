@@ -1,0 +1,18 @@
+/* Just a simple test file, no naked top level expressions
+   Just definitions and functions */
+Int a = 123;
+String b = "hello";
+/* Goal to parse this correctly */
+func helloWorld(Int: first, Int: second)
+{
+	 Int b = 456;
+	 String c = "edgar";
+	 c;
+	 for (Int a in myDict){1 + 1;}
+	 return "hi";
+}
+
+func main()
+{
+   helloWorld(1, 2);
+}

@@ -1,9 +1,9 @@
 open Ast
 
 type bstmt =
-Lit of int (* Push a literal *)
+LitInt of int (* Push a literal *)
  | Drp (* Discard a value *)
- | Bin of Ast.operator (* Perform arithmetic on top of stack *)
+ | Bin of Ast.op (* Perform arithmetic on top of stack *)
  | Lod of int 
  | Str of int 
  | Lfp of int 

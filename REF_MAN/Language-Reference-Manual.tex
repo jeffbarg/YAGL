@@ -1,0 +1,179 @@
+\documentclass[12pt]{article}
+\usepackage{amssymb,amsmath,latexsym,listings,float,algorithm}
+\usepackage[noend]{algorithmic}
+\lstset{
+ basicstyle = \ttfamily,
+ basewidth  = {.5em,0.4em},
+ columns    = flexible,
+ % columns  = fullflexible,
+}
+
+% Page length commands go here in the preamble
+\setlength{\oddsidemargin}{-0.25in} % Left margin of 1 in + 0 in = 1 in
+\setlength{\textwidth}{7in}   % Right margin of 8.5 in - 1 in - 6.5 in = 1 in
+\setlength{\topmargin}{-.75in}  % Top margin of 2 in -0.75 in = 1 in
+\setlength{\textheight}{9.2in}  % Lower margin of 11 in - 9 in - 1 in = 1 in
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\restylefloat{table}
+\renewcommand{\baselinestretch}{1.5} % 1.5 denotes double spacing. Changing it will change the spacing
+
+\setlength{\parindent}{0in}
+\begin{document}
+\title{YAGL: Yet Another Graphing Language\\Language Reference Manual}
+\author{Edgar Aroutiounian, Jeff Barg, Robert Cohen}
+\date{\today}
+\maketitle
+
+\abstract{YAGL is a programming language for generating graphs in SVG format from JSON formatted data.
+}
+
+\section{Introduction}
+This manual describes the YAGL programming language as specified by the YAGL team. 
+
+\section{Lexical Conventions}
+A YAGL program is written in the 7-bit ASCII character set and is divided into a number of logical lines. A logical line terminates by the token NEWLINE, where a logical line is constructed from one or more physical lines. A physical line is a sequence of ASCII characters that are terminated by an end-of-line character.
+
+\subsection{Tokens}
+Besides the NEWLINE token, the following tokens also exist: NAME, INTEGER, STRING, and OPERATOR, where a LITERAL is either a String literal or an Integer literal.  
+
+\subsection{Comments} 
+Comments are introduced by the '\#' character and last until they encounter the next NEWLINE token.
+
+\subsection{Identifiers}
+An identifier is a sequence of ASCII alphatic letters and the underscore character where upper and lower case are distinct; ASCII digits may not be included in an identifier.  Identifiers must start with a lowercase letter.
+
+\subsection{Keywords}
+The following is an enumeration of all the keywords required by a YAGL implementation:
+`if`, `elif`, `for`, `in`, `break`, `func`, `else`, `return`, `continue`, `print`, `while`.  Identifiers cannot have the same name as keywords.
+
+\subsection{String Literals}
+YAGL string literals begin with a double-quote (“) followed by a finite sequence of non-double-quote ASCII characters and close with a double-quote (“). YAGL strings do not recognize escape sequences. An example of a YAGL string literal is String bar = “Hello World”.
+
+\subsection{Integer Literals}
+YAGL supports integer literals.  An integer literal means any sequence of digits that doesn’t lead with a 0.  Integer literals are in base 10.  Integer literals are the only type of numeric literal recognized by the language.  Integer literals can only be positive.  Additionally, integer literals will use the system implementation of integer (so either 16, 32, or 64 bits).  Any integer literal larger than the system int limit is not legal syntax and will not compile.
+
+\subsection{Operators}
+The following tokens are operators:
+‘+’, ‘-’, ‘*’, ‘/’, ‘$>$’, ‘$<$’, ‘$<=$’, ‘$>=$’, ‘==’, ‘$\%$’, ‘=’
+
+\section{Meaning of Identifiers}
+Identifiers either refer to functions, builtin Objects or user defined variables.  Identifiers must start with a lowercase letter.
+
+\subsection{Basic Types}
+YAGL features four built-in data types, String, Array, Integer, and Dictionary. String represents string objects, Arrays represent an ordered sequence of Integers or Dictionaries. Arrays must have all elements of the same type.  Dictionaries represent an implementation of a key-value storage system and are mainly used as a YAGL container for JSON data. Dictionaries may have only Strings as keys and their values are integers. Arrays and Dictionaries are iterable and hence may be used in the declaration of a for loop. 
+
+\section {Data Model}
+As YAGL’s primarily purpose is a language to programmatically create SVGs (scalable vector graphics), it makes sense to have just one global “SVG” Object. This is similar in spirit to EmcaScript’s global “this” object which represents the host environment. Although end users in YAGL may not get a handle  on the “SVG” Object, they may interact with it using builtin library functions such as title, addRect, addCircle, etc. This data model simplifies the end user’s experience by allowing them to focus on their algorithmic manipulation of their data. A call to makeGraph along with initial parameters executes the code from top to bottom. All code written after a call to makeGraph is not executed. 
+
+\section{Expressions}
+The precedence of expression operators will first prioritize function calls, then parentheses, then multiplication/division/modulo, then addition and subtraction.  
+
+\section{Array References}
+An array identifier followed by a set of square brackets enclosing an integer value to denote the index denotes array indexing, i.e. myArray[4].  Array indexing returns an integer value.  Indexing out of bounds in an array causes a compile time error.  Arrays start at index 0, and a legal index is any index from 0 to the number of elements in the array minus 1.
+
+\section{Dictionary References}
+A Dictionary identifier followed by a set of square brackets enclosing a string literal performs a lookup. Performing a lookup on a Dictionary where the key does not exist returns -1, else it returns the integer value associated with the key.
+
+\section{Function Calls}
+A function call is a postfix expression which is performed by the identifier of the function
+followed by a possibly empty set of parentheses. Functions may return an explicit value to their caller if they have a return expression defined in their body, else they return 0.  return is a statement that takes an expression, evaluates it, then returns it as the value of the expression where the function is called.
+
+\section{Operators}
+
+\subsection{Multiplicative Operators}
+The multiplicator operators *, /, %, follow the usual rules of mathematics and group left to right, where * denotes multiplication, / denotes division, and % denotes modular arithmetic;
+division by 0 will return 0.  Division will also truncate decimal parts of numbers to the nearest integer lower than the mathematical division.
+
+\subsection{Additive Operators}
+The additive operators +, - group left to right where + denotes addition and - denotes subtraction
+
+\subsection{Relational Operators}
+The relational operators group left to right and return back 1 if the operator evaluates to true and 0 if the operator evaluates to false. 
+ 
+\subsection{Equality Operators}
+The equality operator == is only valid for either Integer or String types and returns 1 if the operands are equal, 0 otherwise. 
+
+\subsection{Logical And}
+The \&\& operators groups left to right and returns 1 if both its operands
+compare unequal to zero with 0 otherwise, logical and is only defined for integers.
+
+\subsection{Logical Or}
+The $\vert \vert$ operators group left to right and return 1 if either of its operands compares unequal to zero and 0 otherwise.
+
+\subsection{Assignment Expressions}
+There is only one assignment operator, =.  The equals operator accepts a type declaration along with a NAME token for its left operand and an expression for its right operand. 
+ 
+\subsection{Comma Operator}
+A pair of expressions separated bys 0 without need of an explicit return declaration. 
+The parameter list is a comma-separated series of identifiers with type names (for example, (int a, int b, int c).  The parameter list can also be empty and just be an empty set of parenthesis. 
+
+\section{Scope}
+
+\subsection{Lexical Scope}
+Identifiers are placed into non-intersecting namespaces.  The two namespaces are functions and file level.  The lexical scope of an object or function identifier that appears in a block begins at the end of its declarator and persists to the end of the block in which it appears.  The scope of a parameter of a function begins at the start of the function block and extends to the end.  If an identifier is reused at the head of a block or as a function parameter, any other declaration of the identifier is shadowed until the end of the block or function. 
+
+\section{StatementsIteration Statements}
+
+\textit{For} loops iterate through Arrays or Dictionaries.  The type specifier is given as a parameter in the for loop.  If the array contains no objects of the specified type, the loop simply does not execute.  For an array, the variable specified will be bound to each of the elements of the array sequentially and the loop statement will run.  For a Dictionary, the string key will be bound to the variable specified in the for loop; moreover, the only allowed type for the iterated variable is String.  The order of the dictionary iteration is left up to implementation details.  The order of an array is from index 0 to the last index in the array.
+
+While loops execute after theinalogously, the continue keyword may only be used within the body of a \textit{for} or \textit{while} loop and it signals the flow of control to move onto the next item in iteration. 
+
+\subsection{If Statements}
+
+In an \textit{if} statement, the expression is evaluated, including side-effects, and \l symbols NAME, INTEGER, STRING, NEWLINE, OPERATORs, which includes ‘+’, ‘-’, ‘/’, ‘*’, ‘%’, and PUNCTUATION which includes ‘(‘, ‘)’, ‘{‘, and ‘}’.  Note that * after a regular expression denotes zero or more instances of the expression, + denotes zero or more instances and ? denotes one or zero. 
+
+\begin{lstlisting}
+type_spec: Array | Dict | Int | String
+flow_stmt: break_stmt | continue_stmt | return_stmt
+break_stmt: ‘break’
+continue_stmt: ‘continue’
+return_stmt: ‘return’ [expr]
+func_definition: 'func' NAME parameters ‘{‘ suite ‘}’
+suite: simple_stmt | compound_stmt
+simple_stmt: (expr_stmt | print_stmt) NEWLINE
+expr_stmt: asn_stmt, NEWLINE | expr 
+asn_stmt: type_specifier, NAME ‘=’ expr
+exefinition | ( if_stmt | while_stmt | for_stmt | simple_stmt )+
+if_stmt: ‘if’ ‘(‘ bool_expr ‘)’ suite (‘elif’ suite)* (‘else’ suite)?
+while_stmt: ‘while’ ‘(‘ bool_expr ’)’ suite
+for_stmt: ‘for’ ‘(‘ type_spec NAME ‘in’ NAME ‘)’ ‘{‘ suite ‘}’
+bool_expr: 1 | 0 | logic_and | logic_or 
+logic_and: expr ‘&&’ expr 
+logic_or: expr ‘||’ expr 
+comp_op: ‘<’ | ‘>’ | ‘==’ | ‘>=’ | ‘<=’ | ‘!=’
+parameters: ‘(‘ [args_list] ‘)’
+args_list: (type_spec NAME)*
+\end{lstlisting}
+
+
+\section{Example Code}
+Below is an example program written in the YAGL language.
+
+\begin{lstlisting}
+# This is an example of a YAGL program. 
+# There is one global object always available, the Graph object that you 
+# don't have a handle on, but will manipulate with makeGraph
+Array myJson = jsonArray(``/path/to/json/data.json'')
+
+#Could also do jsonDict which returns Dict 
+func createGraph()
+{
+    for (Dict item in myJson)
+    {   # Assuming everything in item[``foo''] is string and adding a rect to the gm[``xCoord''], item[``yCoord''], item[``height''], item[``width''])
+        #OR!
+        addCircle(item[``cx''], item[``cy''], item[``r'']
+    }   #Builtin function that provides a title to the global singleton svg object. 
+    title(``YAET, Yet Another Example Title'')
+}
+
+createGraph()
+# Need to call makeGraph for the graph to be actually made
+makeGraph(<nameOfFile>, <width>, <height>)
+
+\begin{document}
+\begin{lstlisting}
+\end{lstlisting}
+
+\end{document}

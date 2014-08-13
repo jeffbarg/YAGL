@@ -1,37 +1,33 @@
-type operator = Add | Mult | Sub | Div | Neq | Equal | LessThan | Leq
-		| Geq
-		| GreaterThan
-		| LogicalAnd
-		| LogicalOr
+ type op = Add | Sub | Mult | Div 
+    | Equal | Neq | Less | Leq | Greater | Geq
 
-type expr = Literal of int 
-	  | Id of string 
-	  | BinOp of expr * operator * expr
-	  | FuncCall of string * expr list 
-	  | ArrayIndex of string * expr
-	  | NoExpr 
+ and expr = LiteralInt of int
+    | LiteralString of string
+    | Id of string
+    | Binop of expr * op * expr
+    | Call of string * expr list
+    | Noexpr
 
-type var_defin = {qual:string;
-		  ident:string;
-		  rhs:expr}
+ and stmt = Block of stmt list
+    | Expr of expr
+    | Return of expr
+    | If of expr * stmt * stmt
+    | For of qual * string * string * stmt 
+    | While of expr * stmt
 
-(* Note that expressions are a type of statement *)		 
-type stmt = Block of stmt list
-	  | Expr of expr 
-	  | Return of expr
-	  | If of expr * stmt * stmt
-	  | For of string * string * string * stmt 
-	  | While of expr * stmt 
-	  | Break
+ and qual = Dict | Array | Int | String 
+           
+ and variable = {id:string; v_type:qual;rhs:expr}
+      
+ and func_decl = {fname : string;
+      formals : (qual * string) list;
+      locals : variable list;
+      body : stmt list}
 
+type program = variable list * func_decl list
 
-type func_defin = {fname:string;
-		  formals:(string * string) list;
-		  locals:var_defin list;
-		  body:stmt list}
-type yagl_program = var_defin list * func_defin list * stmt list 
-
-(* Hideous but that's okay *)
-let first_elem = function (first, second, third) ->  first
-let second_elem = function (first, second, third) -> second
-let third_elem = function (first, second, third) ->  third 
+let string_of_qual = function 
+  | Dict -> "Dict"
+  | Array -> "Array"
+  | String -> "String"
+  | Int -> "Int"
