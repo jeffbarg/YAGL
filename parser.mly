@@ -11,7 +11,6 @@
 
 %nonassoc NOELSE
 %nonassoc ELSE
-%right ASSIGN
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
@@ -54,9 +53,15 @@ vdecl:
   | INT ID ASSIGN expr SEMI { {id=$2;
              v_type=Int;
              rhs=$4}}
+  | INT ID SEMI { {id=$2;
+             v_type=Int;
+             rhs=LiteralInt(0)}}
   | STRING ID ASSIGN expr SEMI { {id=$2;
           v_type=String;
                                   rhs=$4}} 
+  | STRING ID SEMI { {id=$2;
+          v_type=String;
+                                  rhs=LiteralString("")}} 
 
 stmt_list:
     /* nothing */  { [] }
