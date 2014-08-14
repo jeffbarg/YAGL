@@ -1,0 +1,110 @@
+\documentclass[12pt]{article}
+\usepackage{amssymb,amsmath,latexsym,listings,float}
+
+% Page length commands go here in the preamble
+\setlength{\oddsidemargin}{-0.25in} % Left margin of 1 in + 0 in = 1 in
+\setlength{\textwidth}{7in}   % Right margin of 8.5 in - 1 in - 6.5 in = 1 in
+\setlength{\topmargin}{-.75in}  % Top margin of 2 in -0.75 in = 1 in
+\setlength{\textheight}{9.2in}  % Lower margin of 11 in - 9 in - 1 in = 1 in
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\restylefloat{table}
+\renewcommand{\baselinestretch}{1.5} % 1.5 denotes double spacing. Changing it will change the spacing
+
+\setlength{\parindent}{0in} 
+\begin{document}
+\title{YAGL: Yet Another Graphing Language}
+\author{Edgar Aroutiounian, Jeff Barg, Robert Cohen}
+\date{\today}
+\maketitle
+
+
+\section{Description of YAGL}
+YAGL is a new programming language for constructing graphics, with the intent of allowing programmers to construct graphics with various different output formats.\\
+
+The language features a static type system with a void type that can conditionally downcast to the other primitives (Int, Array, etc..).  Types are indicated by the type name declarator followed by the variable name.  All types are objects.  Each object holds an enumeration for what its type is, along with the underlying data.  There is no string type.  There are integer and array literals.\\
+
+There are limited control structures: an iterated for loop, an if statement and break.  A for loop can iterate on Stream and Array types and will yield a void type as the iterated item which needs to be downcast.
+
+\section{What Does YAGL Solve?}
+YAGL allows users to take JSON formatted data and produce clear and concise graphs. The properties of these graphs (such as color) can be manipulated utilizing algorithms. The output of the YAGL program can be determined by the user (SVG, ASCII, or PDF). YAGL is essentially and clean and minimal language for producing graphs quickly and easily.
+
+\section{Examples of YAGL Syntax}
+YAGL will have a void type, which cannot be operated upon. The void type can be conditionally downcast using the syntax:
+\begin{lstlisting}
+if let b = a as Int {
+	# scope of b is only in this function 
+}
+\end{lstlisting}
+This allows us to safely operate on JSON streams.\\
+
+YAGL does not have a string type. In order to pipe in filenames to open JSON files, the open open keyword takes in \$[n] which specifies the $n{th}$ command line parameter. $open$ constructs a Stream.
+\begin{lstlisting}
+Stream s = open $0
+\end{lstlisting}
+
+YAGL has an iterated for loop and array literals:
+\begin{lstlisting}
+Stream s = open $0
+\end{lstlisting}
+YAGL has an iterated for loop and array literals:
+\begin{lstlisting}
+for a in [[4,1,5], 3, 5, [2, 3]] {
+	if (let int_a = a as Int) {
+	}
+	elif (let int_a = a as Array) { }
+}
+\end{lstlisting}
+\begin{table}[H]
+\caption{YAGL PRIMITIVES}
+\centering
+\begin{tabular}{c c c }
+\hline\hline
+KEYWORDS & OPERATORS & TYPES \\ [0.5ex] % inserts table %heading
+\hline
+if&++&Void \\
+elif&+&Array \\
+for&-&Canvas \\
+in&*&Int \\
+break&/&Stream \\
+let\\
+in\\
+func \\
+
+\hline
+\end{tabular}
+\end{table}
+
+\section{Example YAGL Program}
+\begin{lstlisting}
+func makeGraph(Array: param1)
+{
+	Canvas myGraph = new Canvas()
+	# 0 is ascii art graph, 1 is SVG meant for a browser, 2 is PDF?
+	myGraph.graphType = 0
+	# Opens up command line argument, presumably JSON.
+	Stream s = open $0
+	for (item in s)
+	{	# Say there are only 3 enums of types
+		# 0 is integer, 1 is array, 2 is canvas Object
+		if (let integer_item = item as Int)
+		{
+			myGraph.addRectAllParams(item)
+		}
+		elif (let array_item = item as Array)
+		{
+			myGraph.addRect(item[0], item[1], item[2], item[3])
+		}
+	}
+}
+
+# Notice Last item is a nested Array 
+myData = [3, 4, 5, 1, [3, 1, 5, 6]]
+build makeGraph(myData)
+
+## Standard Library - preview graph with predefined parameters, 
+spits out ascii art graph to standard output preview(data)
+\end{lstlisting}
+
+\end{document}
