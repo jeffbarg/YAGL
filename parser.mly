@@ -73,7 +73,7 @@ stmt:
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | FOR LPAREN qual ID IN ID RPAREN stmt { For($3, $4, $6, $8) }
+  | FOR LPAREN qual ID IN expr RPAREN stmt { For($3, $4, $6, $8) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
 qual:

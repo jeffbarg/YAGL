@@ -12,20 +12,26 @@ open Ast
 open Bytecode
 
 open Printf
-let file = "example.c"
+let file = "example.cpp"
 
 let generate prog =
   let oc = open_out file in
   fprintf oc
   "
   #import <stdio.h>
-  #define DEBUG 0
+  #import <iostream>
+
+  using namespace std;
+
+
+  #define DEBUG 1
   int main() {
     int num_globals = %i;
     int globals[num_globals];
     int stack[1024];
+
     char * str_stack[1024];
-    char * empty_str = \"\";
+    char * empty_str = \"\";    
 
     int i = 0;
 
@@ -49,10 +55,9 @@ let generate prog =
     for (i = 0; i < num_globals; i++) {
       globals[i] = 0;
     }
-  " prog.num_globals;
+    printf(\"\\n\\n\");
 
-  let stack = Array.make 1024 0
-  and globals = Array.make prog.num_globals 0 in
+  " prog.num_globals;
 
 let label_counter = ref (-1) in
 let rec execute_prog fp sp pc = 
@@ -71,16 +76,16 @@ let rec execute_prog fp sp pc =
     fprintf oc
       "op1 = stack[sp-2];\nop2=stack[sp-1];";
     (match op with
-      Add -> fprintf oc "result=op1+op2;"
-    | Sub -> fprintf oc "result=op1-op2;"
-    | Mult -> fprintf oc "result=op1*op2;"
-    | Div -> fprintf oc "result=op1/op2;"
-    | Equal -> fprintf oc "result=op1==op2;"
-    | Neq -> fprintf oc "result=op1!=op2;"
-    | Less -> fprintf oc "result=op1<op2;"
-    | Leq -> fprintf oc "result=op1<=op2;"
-    | Greater -> fprintf oc "result=op1>op2;"
-    | Geq -> fprintf oc "result=op1>=op2;");
+      Add -> fprintf oc "result=(op1+op2);"
+    | Sub -> fprintf oc "result=(op1-op2);"
+    | Mult -> fprintf oc "result=(op1*op2);"
+    | Div -> fprintf oc "result=(op1/op2);"
+    | Equal -> fprintf oc "result=(op1==op2);"
+    | Neq -> fprintf oc "result=(op1!=op2);"
+    | Less -> fprintf oc "result=(op1<op2);"
+    | Leq -> fprintf oc "result=(op1<=op2);"
+    | Greater -> fprintf oc "result=(op1>op2);"
+    | Geq -> fprintf oc "result=(op1>=op2);");
     fprintf oc
       "stack[sp-2]=result;sp--;pc++;"
   | Lod i -> fprintf oc "stack[sp]=globals[%i];" i; fprintf oc "sp++;pc++;";
@@ -89,12 +94,12 @@ let rec execute_prog fp sp pc =
   | Sfp i -> fprintf oc "stack[fp+%i]=stack[sp-1];" i; fprintf oc "pc++;";
   | Jsr(-1) ->
     fprintf oc "%s"
-        "printf(\"\\n%i\\n\", stack[sp-1]);pc++;"; 
+        "printf(\"%i\\n\", stack[sp-1]);pc++;"; 
   | Jsr i -> fprintf oc "stack[sp]=pc+1;sp++;pc=%i;" i;
-  | Ent i -> fprintf oc "stack[sp]=fp;sp+=(%i+1);pc++;" i;
+  | Ent i -> fprintf oc "stack[sp]=fp;fp=sp;sp+=(%i+1);pc++;" i;
   | Rts i -> fprintf oc "new_fp = stack[fp];new_pc=stack[fp-1];stack[fp-1-%i]=stack[sp-1];fp=new_fp;sp=fp-%i;pc=new_pc;" i i;
-  | Beq i -> fprintf oc "sp--;pc+=((stack[sp-1]==0)?%i:1);" i;
-  | Bne i -> fprintf oc "sp--;pc+=((stack[sp-1]!=0)?%i:1);" i;
+  | Beq i -> fprintf oc "sp--;pc+=((!stack[sp-1])?%i:1);" i;
+  | Bne i -> fprintf oc "sp--;pc+=((stack[sp-1])?%i:1);" i;
   | Bra i -> fprintf oc "pc+=%i;" i;
   | Hlt -> fprintf oc "goto END;";
 ) prog.text

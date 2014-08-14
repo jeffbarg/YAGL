@@ -84,7 +84,9 @@ in let rec stmt = function
   | If (p, t, f) -> let t' = stmt t and f' = stmt f in
     expr p @ [Beq(2 + List.length t')] @
     t' @ [Bra(1 + List.length f')] @ f'
-  | For (e1, e2, e3, b) -> (* Rewrite into a while statement *)
+  | For (qual, id, e, b) -> 
+    let b' = stmt b and e' = expr e in
+    (* Rewrite into a while statement *)
     [](* stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))])) *)
   | While (e, b) ->
     let b' = stmt b and e' = expr e in
@@ -96,7 +98,6 @@ in let rec stmt = function
     [Str (StringMap.find v.id env.global_index)]
     with Not_found ->
     raise (Failure ("undeclared variable " ^ v.id)))
-
 
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)

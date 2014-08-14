@@ -12,7 +12,7 @@
     | Expr of expr
     | Return of expr
     | If of expr * stmt * stmt
-    | For of qual * string * string * stmt 
+    | For of qual * string * expr * stmt 
     | While of expr * stmt
     | Variable of variable
 
