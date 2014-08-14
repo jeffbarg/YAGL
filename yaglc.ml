@@ -10,10 +10,8 @@ let _ =
   (* List.iter (fun a -> print_endline (a.id)) (fst program);
   List.iter (fun a -> print_endline (string_of_qual a.v_type)) (fst program);
   List.iter (fun a -> print_endline a.fname) (snd program); *)
-
-(*  let checked_code = Semantic.verify program in 
-  "hello" *)
+  let verified = Semantic.verify program in 
 (* Would be nice to have a static checker, so that we can reject int + string *)
-  let compiled_code = Compile.translate program in 
+  let compiled_code = Compile.translate verified in 
   print_endline "here";
   CodeGen.generate compiled_code
