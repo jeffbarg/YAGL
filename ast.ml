@@ -6,6 +6,7 @@
     | Id of string
     | Binop of expr * op * expr
     | Call of string * expr list
+    | ArrayIndex of string * expr 
     | Noexpr
 
  and stmt = Block of stmt list

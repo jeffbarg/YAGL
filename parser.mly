@@ -1,6 +1,6 @@
 %{ open Ast %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA COLON IN
+%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA COLON IN LBRACK RBRACK 
 %token PLUS MINUS TIMES DIVIDE ASSIGN FUNC 
 %token EQ NEQ LT LEQ GT GEQ
 %token RETURN IF ELSE FOR WHILE 
@@ -97,6 +97,7 @@ expr:
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
+  | ID LBRACK expr RBRACK { Array($1, $3) }
   | LPAREN expr RPAREN { $2 }
 
 actuals_opt:

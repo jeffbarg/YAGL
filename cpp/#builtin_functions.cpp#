@@ -32,7 +32,6 @@ Json::Value openJson(string path)
   // 	  cout << a;
   // 	}
   //   }
-
   return root_node;
 }
 
