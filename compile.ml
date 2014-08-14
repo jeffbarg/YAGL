@@ -24,6 +24,7 @@ let string_map_pairs map pairs =
 Throw an exception if something is wrong, e.g., a reference to an unknown variable or function *)
 let translate (globals, functions) = 
   (* Allocate "addresses" for each global variable *)
+
   let global_indexes = string_map_pairs StringMap.empty (enum 1 0 (List.map (fun l -> l.id) globals)) in
   
   (* Assign indexes to function names; built-in functions are special *)
@@ -36,8 +37,9 @@ let translate (globals, functions) =
   let built_in_functions =
     StringMap.add "title"     (-4) built_in_functions in
 
+
   let function_indexes = string_map_pairs built_in_functions
-    (enum 1 4 (List.map (fun f -> f.fname) functions)) in
+    (enum 1 1 (List.map (fun f -> f.fname) functions)) in
   
   (* Translate an AST function to a list of bytecode statements *)
   
@@ -59,6 +61,7 @@ let translate env fdecl =
 (* Translate an expression *) 
 let rec expr = function
   LiteralInt i -> [LitInt i]
+  | LiteralString s -> [StrInt s]
   | Id s ->
     (try [Lfp (StringMap.find s env.local_index)]
   with Not_found -> try
@@ -87,15 +90,31 @@ in let rec stmt = function
     let b' = stmt b and e' = expr e in
     [Bra (1+ List.length b')] @ b' @ e' @
     [Bne (-(List.length b' + List.length e'))]
+  | Variable v -> expr v.rhs @
+    (try [Sfp (StringMap.find v.id env.local_index)]
+    with Not_found -> try
+    [Str (StringMap.find v.id env.global_index)]
+    with Not_found ->
+    raise (Failure ("undeclared variable " ^ v.id)))
+
 
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)
+ 
+  (List.fold_left (fun ls v -> expr v.rhs @
+    (try [Sfp (StringMap.find v.id env.local_index)]
+    with Not_found -> try
+    [Str (StringMap.find v.id env.global_index)]
+    with Not_found ->
+    raise (Failure ("undeclared variable " ^ v.id)))) [] fdecl.locals) @
   stmt (Block fdecl.body) @ (* Body *)
   [LitInt 0; Rts num_formals] (* Default = return 0 *)
 
 in let env = { function_index = function_indexes;
                global_index = global_indexes;
                local_index = StringMap.empty } in
+
+StringMap.iter (fun x y -> print_endline x) function_indexes;
 
 (* Code executed to start the program: Jsr main; halt *)
 let entry_function = try
@@ -113,11 +132,16 @@ let (fun_offset_list, _) = List.fold_left
   func_bodies in
 let func_offset = Array.of_list (List.rev fun_offset_list) in
 
-{ num_globals = List.length globals;
+let retval = { num_globals = List.length globals;
   (* Concatenate the compiled functions and replace the function
   indexes in Jsr statements with PC values *)
-  text = Array.of_list (List.map (function
-    Jsr i when i > 0 -> Jsr func_offset.(i)
-    | _ as s -> s) (List.concat func_bodies)
-  )
-}
+  text = Array.of_list (
+    List.map 
+        (function
+          Jsr i when i > 0 -> Jsr func_offset.(i)
+          | _ as s -> s
+        )
+      (List.concat func_bodies)
+    )
+} 
+in Array.iter (function Jsr i -> print_int i | _ -> ()) retval.text; retval

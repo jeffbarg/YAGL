@@ -14,6 +14,7 @@
     | If of expr * stmt * stmt
     | For of qual * string * string * stmt 
     | While of expr * stmt
+    | Variable of variable
 
  and qual = Dict | Array | Int | String 
            

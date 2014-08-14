@@ -2,6 +2,7 @@ open Ast
 
 type bstmt =
 LitInt of int (* Push a literal *)
+ | StrInt of string (* Push a literal *)
  | Drp (* Discard a value *)
  | Bin of Ast.op (* Perform arithmetic on top of stack *)
  | Lod of int 
