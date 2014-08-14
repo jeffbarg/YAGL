@@ -61,7 +61,7 @@ let translate env fdecl =
 (* Translate an expression *) 
 let rec expr = function
   LiteralInt i -> [LitInt i]
-  | LiteralString s -> [StrInt s]
+  | LiteralString s -> [LitStr s]
   | Id s ->
     (try [Lfp (StringMap.find s env.local_index)]
   with Not_found -> try

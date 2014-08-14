@@ -60,9 +60,7 @@ let generate prog =
   " prog.num_globals;
 
 let label_counter = ref (-1) in
-let rec execute_prog fp sp pc = 
-
-  
+let rec execute_prog fp sp pc =   
   Array.iter (fun x ->
   incr label_counter;
   fprintf oc " if(DEBUG)printf(\"PC: %%i \\n \", pc); goto gotopc;LABEL%i:\n" !label_counter;
@@ -70,7 +68,9 @@ let rec execute_prog fp sp pc =
     LitInt i -> 
     fprintf oc
       "stack[sp] = %i;sp++;pc++;" i;
-  | StrInt s -> ()
+  | LitStr i -> 
+    fprintf oc
+      "stack[sp] = %i;sp++;pc++;" 4;
   | Drp -> fprintf oc "sp--;pc++;"
   | Bin op -> 
     fprintf oc
