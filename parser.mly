@@ -97,7 +97,7 @@ expr:
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
-  | ID LBRACK expr RBRACK { Array($1, $3) }
+  | ID LBRACK expr RBRACK { ArrayIndex($1, $3) }
   | LPAREN expr RPAREN { $2 }
 
 actuals_opt:
