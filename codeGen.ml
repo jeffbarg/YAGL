@@ -19,6 +19,7 @@ let generate prog =
   fprintf oc
   "
   #import <stdio.h>
+  #define DEBUG 0
   int main() {
     int num_globals = %i;
     int globals[num_globals];
@@ -48,7 +49,6 @@ let generate prog =
     for (i = 0; i < num_globals; i++) {
       globals[i] = 0;
     }
-
   " prog.num_globals;
 
   let stack = Array.make 1024 0
@@ -60,7 +60,7 @@ let rec execute_prog fp sp pc =
   
   Array.iter (fun x ->
   incr label_counter;
-  fprintf oc "goto gotopc;LABEL%i:\n" !label_counter;
+  fprintf oc " if(DEBUG)printf(\"PC: %%i \\n \", pc); goto gotopc;LABEL%i:\n" !label_counter;
   match x with
     LitInt i -> 
     fprintf oc
@@ -96,11 +96,11 @@ let rec execute_prog fp sp pc =
   | Beq i -> fprintf oc "sp--;pc+=((stack[sp-1]==0)?%i:1);" i;
   | Bne i -> fprintf oc "sp--;pc+=((stack[sp-1]!=0)?%i:1);" i;
   | Bra i -> fprintf oc "pc+=%i;" i;
-  | Hlt -> ()
+  | Hlt -> fprintf oc "goto END;";
 ) prog.text
 in 
 let retval = execute_prog 0 0 0 in
-let rec switchstatements n s = (if n = 0 then s else switchstatements (n-1) (s ^ "case " ^ string_of_int n ^ ": goto LABEL" ^ string_of_int n ^ ";")) in
-fprintf oc "gotopc:\nswitch(pc){%s}}" (switchstatements !label_counter "");
+let rec switchstatements n s = (if n < 0 then s else switchstatements (n-1) (s ^ "case " ^ string_of_int n ^ ": goto LABEL" ^ string_of_int n ^ ";break;")) in
+fprintf oc "gotopc:\nswitch(pc){%sdefault:printf(\"\\nERROR: %%i\",pc);break;}\nEND: ; }" (switchstatements !label_counter "");
 close_out oc;
 retval
