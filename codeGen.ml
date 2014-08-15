@@ -20,7 +20,7 @@ let generate prog =
   #include <fstream>
   #include <string>
   #include <stdlib.h>
-  #include \"json/json.h\"
+  #include <json/json.h>
 
   #import <stdio.h>
   #import <iostream>
