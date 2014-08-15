@@ -1,0 +1,8 @@
+func main()
+{
+	canvas(500,500);
+	addRect(20, 20, 50, 50, "blue", "red");
+	addRect(50, 20, 50, 50, "blue", "red");
+	addRect(80, 20, 50, 50, "blue", "red");
+	addRect(110, 20, 50, 50, "blue", "red");
+}
