@@ -1,10 +1,27 @@
 \documentclass{beamer}
 \usepackage[latin1]{inputenc}
+\usepackage{amssymb,amsmath,latexsym,listings,float,algorithm}
+\usepackage[noend]{algorithmic}
+\lstset{
+ basicstyle = \ttfamily,
+ basewidth  = {.5em,0.4em},
+ columns    = flexible,
+ % columns  = fullflexible,
+}
+
 \usetheme{Warsaw}
 \title[YAGL]{YAGL\\Yet Another Graphics Language}
 \author{Edgar Aroutiounian \\ Jeff Barg \\ Robert Cohen}
 \institute{COMS S4115 - Programming Languages \& Translators \\ Columbia University}
 \date{August 15, 2014}
+
+\lstset{
+ basicstyle = \ttfamily,
+ basewidth  = {.5em,0.4em},
+ columns    = flexible,
+ % columns  = fullflexible,
+}
+
 \begin{document}
 
 \begin{frame}
@@ -13,15 +30,51 @@
 
 
 \begin{frame}{What is YAGL?}
-YAGL IS
+YAGL is a new programming language for constructing graphics, with the intent of allowing programmers to construct SVGs. The language also features a static type system to help with potential type errors. \\
+
 \end{frame}
 
 \begin{frame}{How Does YAGL work?}
-Architecture
+The YAGL internal stack begins with the a lexical tokenizer. The tokenizer converts a stream of chars into a 
+list of tokens in accordance with YAGL's grammar. The resultant list is then passed to a parser which creates an 
+abstract syntax tree. This AST is then passed to a 
+semantic analyzer which stops the compilation process
+upon encountering a semantic error, i.e. adding a String to an Integer. If the semantic analysis succeeds, the AST 
+passes to the code generator. At this stage, code generation starts and outputs a single C++ source code file.
 \end{frame}
 
 \begin{frame}{YAGL Demonstration}
+\begin{lstlisting}
+func main() { 
+ Int a = numberOfRings();
+ Int b = a;
+ String c = "red";
+ Int d = 0;
 
+ canvas(500, 500);
+
+ while (a) {
+   if ((a/2 + a/2) == a) {
+     c = "red";
+   } else {
+     c = "blue";
+   }
+
+   d = (250 * a) / b;
+
+   addCircle(d, 250, 250, c, c);
+
+   a = a - 1;
+ }
+
+ text("A Target!", 40, 40, 300);
+}
+
+func numberOfRings() {
+ return 3;
+}
+\end{lstlisting}
+s
 \end{frame}
 
 \begin{frame}{What Problems Did We Run Into}
