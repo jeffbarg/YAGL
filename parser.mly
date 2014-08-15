@@ -48,7 +48,7 @@ vdecl_list:
   |             { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
-vdecl:
+vdecl:/* Need to come back to this, looks suspicious */
 /* YAGL only knows string literals and int literals */
   | INT ID ASSIGN expr SEMI { {id=$2;
              v_type=Int;
@@ -75,6 +75,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
   | FOR LPAREN qual ID IN expr RPAREN stmt { For($3, $4, $6, $8) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+  | qual ID ASSIGN expr { Variable({id=$2;v_type=$1;rhs=$4}) }
 
 qual:
   | ARRAY { Array }

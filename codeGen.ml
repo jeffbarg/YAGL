@@ -103,10 +103,19 @@ let rec execute_prog fp sp pc =
   | Sfp i -> fprintf oc "stack[fp+%i]=stack[sp-1];" i; fprintf oc "pc++;";
   | Jsr(-1) ->
     fprintf oc "%s"
-        "printf(\"%li\\n\", (int64) stack[sp-1]);pc++;";
-  | Jsr(-1) ->
+        "printf(\"\\n%i\\n\", (int64) stack[sp-1]);pc++;"; 
+  | Jsr(-2) ->
     fprintf oc "%s"
-        "printf(\"%li\\n\", (int64) stack[sp-1]);pc++;"; 
+        "canvas(\"%i, %i\", stack[sp-1], stack[sp-2]);pc++;"; 
+  | Jsr(-3) ->
+    fprintf oc "%s"
+        "text(\"%i, %i, %i, %i\", stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4]);pc++;"; 
+  | Jsr(-4) ->
+    fprintf oc "%s"
+        "addCircle(\"%i, %i, %i, %i, %i\", stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5]);pc++;"; 
+  | Jsr(-5) ->
+    fprintf oc "%s"
+        "addRect(\"%i, %i, %i, %i, %i\", stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5], stack[sp-6]);pc++;"; 
   | Jsr i -> fprintf oc "stack[sp]=(void *)(pc+1);sp++;pc=%i;" i;
   | Ent i -> fprintf oc "stack[sp]=(void *)fp;fp=sp;sp+=(%i+1);pc++;" i;
   | Rts i -> fprintf oc "new_fp=(int64)stack[fp];new_pc=(int64)stack[fp-1];stack[(fp-1-%i)]=stack[sp-1];sp=fp-%i;fp=new_fp;pc=new_pc;" i i;
