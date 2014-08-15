@@ -102,7 +102,7 @@ in let rec stmt = function
 (* Translate a whole function *)
 in [Ent num_locals] @ (* Entry: allocate space for locals *)
  
-  (List.fold_left (fun ls v -> expr v.rhs @
+  (List.fold_left (fun ls v -> ls @ expr v.rhs @
     (try [Sfp (StringMap.find v.id env.local_index)]
     with Not_found -> try
     [Str (StringMap.find v.id env.global_index)]
