@@ -38,6 +38,8 @@ let translate (globals, functions) =
     StringMap.add "addCircle"     (-4) built_in_functions in
   let built_in_functions =
     StringMap.add "addRect"     (-5) built_in_functions in
+  let built_in_functions =
+    StringMap.add "open"     (-6) built_in_functions in
 
   let function_indexes = string_map_pairs built_in_functions
     (enum 1 1 (List.map (fun f -> f.fname) functions)) in
@@ -93,16 +95,15 @@ in let rec stmt = function
     let b' = stmt b and e' = expr e in
     [Bra (1+ List.length b')] @ b' @ e' @
     [Bne (-(List.length b' + List.length e'))]
-  | Variable v -> expr v.rhs @
-    (try [Sfp (StringMap.find v.id env.local_index)]
+  | Variable (id, e) -> expr e @
+    (try [Sfp (StringMap.find id env.local_index)]
     with Not_found -> try
-    [Str (StringMap.find v.id env.global_index)]
+    [Str (StringMap.find id env.global_index)]
     with Not_found ->
-    raise (Failure ("undeclared variable " ^ v.id)))
+    raise (Failure ("undeclared variable " ^ id)))
 
 (* Translate a whole function *)
-in [Ent num_locals] @ (* Entry: allocate space for locals *)
- 
+in [Ent num_locals] @ (* Entry: allocate space for locals *) 
   (List.fold_left (fun ls v -> ls @ expr v.rhs @
     (try [Sfp (StringMap.find v.id env.local_index)]
     with Not_found -> try
@@ -133,7 +134,6 @@ let (fun_offset_list, _) = List.fold_left
   (fun (l,i) f -> (i :: l, (i + List.length f))) ([],0)
   func_bodies in
 let func_offset = Array.of_list (List.rev fun_offset_list) in
-
 let retval = { num_globals = List.length globals;
   (* Concatenate the compiled functions and replace the function
   indexes in Jsr statements with PC values *)

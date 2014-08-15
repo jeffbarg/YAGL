@@ -8,10 +8,9 @@ let generate_code byte_code = let gen_file = open_out (file_name_helper Sys.argv
 
  *)
 open Ast
-  
 open Bytecode
-
 open Printf
+
 let file = "example.cpp"
 
 let generate prog =
@@ -31,12 +30,32 @@ let generate prog =
 
   using namespace std;
 
+string global_svg;
+string style(string c, string s){return \"style=\\\"fill:\" + c + \";stroke:\" + s + \"\\\"\";}
+void addRect(int width, int height, int x, int y, string color, string border_color)
+{global_svg.append(\"<rect width=\\\"\" + to_string(width) + \"\\\" height=\\\"\" + to_string(height) + \"\\\" \" + style(color, border_color) + \"/>\");}
+void addCircle(int r, int cx, int cy, string color, string border_color)
+{global_svg.append(\"<circle cx=\\\"\" + to_string(cx) + \"\\\" cy=\\\"\" + to_string(cy) + \"\\\" \" + \"r=\\\"\" + to_string(r) + \"\\\" \" + style(color, border_color) + \"/>\");}
+void text(string title, int x, int y, int size)
+{global_svg.append(\"<text x=\\\"\" + to_string(x) + \"\\\" y=\\\"\" + to_string(y) + \"\\\" font-family=\\\"Verdana\\\">\" + title + \"</text>\\n\");}
+void canvas(int width, int height)
+{global_svg.append(\"<?xml version=\\\"1.0\\\"?>\\n<svg width=\\\"\" + to_string(width) + \"\\\" height=\\\"\" + to_string(height) + \"\\\"  viewPort=\\\"0 0 \"  + to_string(width) + \" \" + to_string(height) + \"\\\" version=\\\"1.1\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\">\\n\");}
+void _finished(){global_svg.append(\"\\n</svg>\");}
 
   #define DEBUG 1
+
   int main() {
     int64 num_globals = %i;
     void * globals[num_globals];
     void * stack[1024];
+    
+    //Json::Value itr_stack[1024];
+    int itr_stack_counter = -1;
+    void * temp;
+
+    string s1;
+    string s2;
+    string s3;
 
     string str_stack[1024];
     string empty_str = \"\";    
@@ -64,7 +83,9 @@ let generate prog =
       globals[i] = 0;
     }
     printf(\"\\n\\n\");
-
+  
+    ofstream svg_file;
+    svg_file.open(\"test.svg\");
   " prog.num_globals;
 
 let label_counter = ref (-1) in
@@ -79,7 +100,7 @@ let rec execute_prog fp sp pc =
       "stack[sp] = (void *)(%i);sp++;pc++;" i;
   | LitStr s ->
     fprintf oc
-      "stack[sp] = (void *)(new string(%s));sp++;pc++;" s;
+      "stack[sp] = (void *)((char *)(%s));sp++;pc++;" s;
   | Drp -> fprintf oc "sp--;pc++;";
   | Bin op -> 
     fprintf oc
@@ -103,19 +124,27 @@ let rec execute_prog fp sp pc =
   | Sfp i -> fprintf oc "stack[fp+%i]=stack[sp-1];" i; fprintf oc "pc++;";
   | Jsr(-1) ->
     fprintf oc "%s"
-        "printf(\"\\n%i\\n\", (int64) stack[sp-1]);pc++;"; 
+        "printf(\"\\n%li\\n\", (int64) stack[sp-1]);pc++;"; 
   | Jsr(-2) ->
     fprintf oc "%s"
-        "canvas(\"%i, %i\", stack[sp-1], stack[sp-2]);pc++;"; 
+        "canvas((int64) stack[sp-1], (int64) stack[sp-2]);pc++;"; 
   | Jsr(-3) ->
     fprintf oc "%s"
-        "text(\"%i, %i, %i, %i\", stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4]);pc++;"; 
+        "
+        s1 = (char *) stack[sp-1];
+        text(s1, stack[sp-2], stack[sp-3], stack[sp-4]);pc++;"; 
   | Jsr(-4) ->
     fprintf oc "%s"
-        "addCircle(\"%i, %i, %i, %i, %i\", stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5]);pc++;"; 
+        "
+        s1 = (char *) stack[sp-4];
+        s2 = (char *) stack[sp-5];
+        addCircle((int64) stack[sp-1], (int64) stack[sp-2], (int64) stack[sp-3], s1, s2);pc++;"; 
   | Jsr(-5) ->
     fprintf oc "%s"
-        "addRect(\"%i, %i, %i, %i, %i\", stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5], stack[sp-6]);pc++;"; 
+        "addRect(stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5], stack[sp-6]);pc++;"; 
+  | Jsr(-6) ->
+    fprintf oc "%s"
+        "temp = open(stack[sp-1]);pc++;";
   | Jsr i -> fprintf oc "stack[sp]=(void *)(pc+1);sp++;pc=%i;" i;
   | Ent i -> fprintf oc "stack[sp]=(void *)fp;fp=sp;sp+=(%i+1);pc++;" i;
   | Rts i -> fprintf oc "new_fp=(int64)stack[fp];new_pc=(int64)stack[fp-1];stack[(fp-1-%i)]=stack[sp-1];sp=fp-%i;fp=new_fp;pc=new_pc;" i i;
@@ -127,6 +156,11 @@ let rec execute_prog fp sp pc =
 in 
 let retval = execute_prog 0 0 0 in
 let rec switchstatements n s = (if n < 0 then s else switchstatements (n-1) (s ^ "case " ^ string_of_int n ^ ": goto LABEL" ^ string_of_int n ^ ";break;")) in
-fprintf oc "gotopc:\nswitch(pc){%sdefault:printf(\"\\nERROR: %%li\",pc);break;}\nEND: ; }" (switchstatements !label_counter "");
+fprintf oc "gotopc:\nswitch(pc){%sdefault:printf(\"\\nERROR: %%li\",pc);break;}\nEND: 
+_finished();
+svg_file << global_svg;
+svg_file.close();
+
+ ; }" (switchstatements !label_counter "");
 close_out oc;
 retval
