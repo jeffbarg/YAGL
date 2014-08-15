@@ -1,6 +1,3 @@
-
-
-
 func main() 
 {    
      canvas(500, 500);
@@ -9,7 +6,6 @@ func main()
 		addRect(this["width"], this["height"], this["x"], this["y"], "red", "blue");
 	}					 
 }
-
 
 
 
