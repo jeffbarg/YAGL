@@ -33,7 +33,7 @@ let generate prog =
 string global_svg;
 string style(string c, string s){return \"style=\\\"fill:\" + c + \";stroke:\" + s + \"\\\"\";}
 void addRect(int width, int height, int x, int y, string color, string border_color)
-{global_svg.append(\"<rect width=\\\"\" + to_string(width) + \"\\\" height=\\\"\" + to_string(height) + \"\\\" \" + style(color, border_color) + \"/>\");}
+{global_svg.append(\"<rect x=\\\"\" + to_string(x) + \"\\\" y=\\\"\" + to_string(y) + \"\\\" width=\\\"\" + to_string(width) + \"\\\" height=\\\"\" + to_string(height) + \"\\\" \" + style(color, border_color) + \"/>\");}
 void addCircle(int r, int cx, int cy, string color, string border_color)
 {global_svg.append(\"<circle cx=\\\"\" + to_string(cx) + \"\\\" cy=\\\"\" + to_string(cy) + \"\\\" \" + \"r=\\\"\" + to_string(r) + \"\\\" \" + style(color, border_color) + \"/>\");}
 void text(string title, int x, int y, int size)
