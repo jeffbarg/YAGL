@@ -1,8 +1,9 @@
 func main() 
 {    
      canvas(500, 500);
-	iterate(openJson("demo1.json"))
-	{	
+     open("demo1.json");
+
+	iterate {	
 		addRect(this["width"], this["height"], this["x"], this["y"], "red", "blue");
 	}					 
 }
