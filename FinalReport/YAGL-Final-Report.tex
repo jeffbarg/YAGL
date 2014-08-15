@@ -93,7 +93,7 @@ func \\
 
 \section{Language Tutorial}
 
-d
+
 \subsection{Example YAGL Program}
 \begin{lstlisting}
 func canvas(Array: param1)
@@ -171,7 +171,7 @@ An identifier is a sequence of ASCII alphanumeric characters and the underscore 
 
 \subsubsection{Keywords}
 The following is an enumeration of all the keywords required by a YAGL implementation:
-`if`, `else`, `for`, `in`, `func`, `return`, `while`.  Identifiers cannot have the same name as keywords.
+`if`, `else`, `for`, `in`, `func`, `return`, `while`, 'this'.  Identifiers cannot have the same name as keywords.
 
 \subsubsection{Built-in Functions}
 The following functions are built-in:\\
@@ -286,7 +286,12 @@ Proposal, Plan&Parser&Semantic Analysis&Bytecode&Compiler&Test Suite and Final P
 \end{table}
 \section{Architectural Design}
 The YAGL internal stack begins with the a lexical tokenizer. The tokenizer converts a stream of chars into a 
-list of tokens in accordance with YAGL's grammar. The resultant list is then passed 	
+list of tokens in accordance with YAGL's grammar. The resultant list is then passed to a parser which creates an 
+abstract syntax tree. This AST is then passed to a 
+semantic analyzer which stops the compilation process
+upon encountering a semantic error, i.e. adding a String to an Integer. If the semantic analysis succeeds, the AST 
+passes to the code generator. At this stage, code generation starts and outputs a single C++ source code file. 
+
 \section{Test Plan}
 The test regression suite is located under the \textbf{/tests/} subdirectory. There are tests for full YAGL functionality as well as MicroC tests to compare their output to.\\\\
 
@@ -294,6 +299,9 @@ To execute the entire testsuite, simply execute \textbf{./runyagl} from the comm
 
 \section{Lessons Learned}
 The following lessons were learned during the course of this project:\\
+
+\subsection{Start Earlier}
+Time is everything and it would have been less stressful to start earlier. This was an expected problem, as there seems to always be room for improvement.
 
 \subsection{Start Earlier}
 Time is everything and it would have been less stressful to start earlier. This was an expected problem, as there seems to always be room for improvement.

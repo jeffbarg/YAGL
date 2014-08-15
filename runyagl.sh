@@ -6,7 +6,11 @@ make >/dev/null 2>&1
 filename=$(basename "$1")
 filename="${filename%.*}"
 
-g++ -v -Wall -std=c++11 "example.cpp" -o $filename -I./cpp >/dev/null 2>&1
+#>/dev/null 2>&1
+g++ -v -Wall -std=c++11 example.cpp ./cpp/jsoncpp.o -o $filename -I./cpp -L./cpp     
 rm -f example.cpp
-#open $filename".svg"
+./$filename
+if [ "$2" == "safari" ]; then
+    /Applications/Safari.app/Contents/MacOS/Safari "test.svg"
+fi 
 

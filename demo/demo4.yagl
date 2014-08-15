@@ -1,0 +1,28 @@
+func main() { 
+ Int a = numberOfRings();
+ Int b = a;
+ String c = "red";
+ Int d = 0;
+
+ canvas(500, 500);
+
+ while (a) {
+   if ((a/2 + a/2) == a) {
+     c = "red";
+   } else {
+     c = "blue";
+   }
+
+   d = (250 * a) / b;
+
+   addCircle(d, 250, 250, c, c);
+
+   a = a - 1;
+ }
+
+ text("A Target!", 40, 40, 300);
+}
+
+func numberOfRings() {
+ return 3;
+}
