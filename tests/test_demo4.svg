@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<svg width="500" height="500"  viewPort="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="70" width="20" height="170" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="30" y="70" width="20" height="160" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="60" y="70" width="20" height="150" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="90" y="70" width="20" height="140" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="120" y="70" width="20" height="135" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="150" y="70" width="20" height="130" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="180" y="70" width="20" height="155" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+<rect x="210" y="70" width="20" height="167" style="fill:yellow;stroke:blue"/><text x="10" y="40" font-family="Verdana">This is a bar Graph! 42</text>
+
+</svg>

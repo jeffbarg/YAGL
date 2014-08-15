@@ -6,8 +6,7 @@ make >/dev/null 2>&1
 filename=$(basename "$1")
 filename="${filename%.*}"
 
-#>/dev/null 2>&1
-g++ -v -Wall -std=c++11 example.cpp ./cpp/jsoncpp.o -o $filename -I./cpp -L./cpp     
+g++ -v -Wall -std=c++11 example.cpp ./cpp/jsoncpp.o -o $filename -I./cpp -L./cpp >/dev/null 2>&1
 rm -f example.cpp
 ./$filename
 if [ "$2" == "safari" ]; then

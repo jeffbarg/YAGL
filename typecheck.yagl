@@ -1,6 +1,0 @@
-func main ()
-{ 
-  Int a = 123;
-  return 123;
-}
-
