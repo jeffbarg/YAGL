@@ -70,13 +70,15 @@ let rec expr = function
   with Not_found -> try
     [Lod (StringMap.find s env.global_index)]
   with Not_found ->
-    raise (Failure ("undeclared variable " ^ s)))
+    [Itr])
+    (* raise (Failure ("undeclared variable " ^ s))) *)
   | Binop (e1, op, e2) -> expr e1 @ expr e2 @ [Bin op]
   | Call (fname, actuals) -> (try
     (List.concat (List.map expr (List.rev actuals))) @
     [Jsr (StringMap.find fname env.function_index) ]
   with Not_found ->
     raise (Failure ("undefined function " ^ fname)))
+  | ArrayIndex (v, i) -> [Itr] @ expr i @ [Index]
   | Noexpr -> []
 
 (* Translate a statement *)
@@ -87,10 +89,12 @@ in let rec stmt = function
   | If (p, t, f) -> let t' = stmt t and f' = stmt f in
     expr p @ [Beq(2 + List.length t')] @
     t' @ [Bra(1 + List.length f')] @ f'
-  | For (qual, id, e, b) -> 
-    let b' = stmt b and e' = expr e in
-    (* Rewrite into a while statement *)
-    [](* stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))])) *)
+  | For (b) -> 
+    let b' = stmt b and e' = [NextItr] in
+    [Bra (1+ List.length b')] @ b' @ e' @
+    [Bne (-(List.length b' + List.length e'))]
+    @ [EndItr]
+
   | While (e, b) ->
     let b' = stmt b and e' = expr e in
     [Bra (1+ List.length b')] @ b' @ e' @

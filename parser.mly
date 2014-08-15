@@ -73,7 +73,7 @@ stmt:
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | FOR LPAREN qual ID IN expr RPAREN stmt { For($3, $4, $6, $8) }
+  | FOR stmt { For($2) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | ID ASSIGN expr SEMI { Variable($1, $3) }
 
@@ -98,7 +98,7 @@ expr:
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
-  | ID LBRACK expr RBRACK { ArrayIndex($1, $3) }
+  | expr LBRACK expr RBRACK { ArrayIndex($1, $3) }
   | LPAREN expr RPAREN { $2 }
 
 actuals_opt:

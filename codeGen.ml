@@ -42,25 +42,36 @@ void canvas(int width, int height)
 {global_svg.append(\"<?xml version=\\\"1.0\\\"?>\\n<svg width=\\\"\" + to_string(width) + \"\\\" height=\\\"\" + to_string(height) + \"\\\"  viewPort=\\\"0 0 \"  + to_string(width) + \" \" + to_string(height) + \"\\\" version=\\\"1.1\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\">\\n\");}
 void _finished(){global_svg.append(\"\\n</svg>\");}
 
-  #define DEBUG 1
+Json::Value openJson(string path)
+{
+  //Just creating node and reader on the stack. 
+  Json::Value root_node;
+  Json::Reader reader;
+  ifstream test(path);
+    bool result = reader.parse(test, root_node, false);
+  return root_node;
+}
+
+  #define DEBUG 0
 
   int main() {
     int64 num_globals = %i;
     void * globals[num_globals];
     void * stack[1024];
     
-    //Json::Value itr_stack[1024];
-    int itr_stack_counter = -1;
+    Json::Value itr;
+    Json::Value self;
+    
     void * temp;
 
     string s1;
     string s2;
     string s3;
 
-    string str_stack[1024];
-    string empty_str = \"\";    
-
     int64 i = 0;
+
+    int itr_counter = 0;
+    int64 size  = 0;
 
     int64 fp = 0;
     int64 sp = 0;
@@ -74,15 +85,12 @@ void _finished(){global_svg.append(\"\\n</svg>\");}
     int64 new_pc;
 
     for (i = 0;i<1024;i++) {
-      str_stack[i] = empty_str;
-    }
-    for (i = 0;i<1024;i++) {
       stack[i] = 0;
     }
     for (i = 0; i < num_globals; i++) {
       globals[i] = 0;
     }
-    printf(\"\\n\\n\");
+    printf(\"\\ndddd\\n\");
   
     ofstream svg_file;
     svg_file.open(\"test.svg\");
@@ -144,12 +152,16 @@ let rec execute_prog fp sp pc =
         "addRect(stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5], stack[sp-6]);pc++;"; 
   | Jsr(-6) ->
     fprintf oc "%s"
-        "temp = open(stack[sp-1]);pc++;";
+        "s1 = (char *) stack[sp-1]; printf(\"asdfasdfa!!!!%i\", itr_counter);itr = openJson(s1); itr_counter =0;printf(\"%i\", itr_counter);pc++;";
   | Jsr i -> fprintf oc "stack[sp]=(void *)(pc+1);sp++;pc=%i;" i;
+  | Itr -> ()
+  | NextItr -> fprintf oc "size = itr.size(); printf(\"size: %%i\", size); if(itr_counter >= size) { /* put 0 on stack */ stack[sp] = (void *)(0);sp++; } else { self = itr.get((Json::ArrayIndex)0, self); printf(\"%%i\", itr_counter);itr_counter++; /* put 1 on stack */ stack[sp] = (void *)(1);sp++;}pc++;";
+  | EndItr -> ()
+  | Index -> ()
   | Ent i -> fprintf oc "stack[sp]=(void *)fp;fp=sp;sp+=(%i+1);pc++;" i;
   | Rts i -> fprintf oc "new_fp=(int64)stack[fp];new_pc=(int64)stack[fp-1];stack[(fp-1-%i)]=stack[sp-1];sp=fp-%i;fp=new_fp;pc=new_pc;" i i;
-  | Beq i -> fprintf oc "sp--;pc+=((!stack[sp-1])?%i:1);" i;
-  | Bne i -> fprintf oc "sp--;pc+=((stack[sp-1])?%i:1);" i;
+  | Beq i -> print_endline ("\n\n\n" ^ string_of_int i); fprintf oc "pc+=((stack[sp-1] != 0)?%i:1);sp--;" i;
+  | Bne i -> print_endline ("\n\n\n" ^ string_of_int i); fprintf oc "pc+=((stack[sp-1])?%i:1);sp--;" i;
   | Bra i -> fprintf oc "pc+=%i;" i;
   | Hlt -> fprintf oc "goto END;";
 ) prog.text
@@ -160,7 +172,6 @@ fprintf oc "gotopc:\nswitch(pc){%sdefault:printf(\"\\nERROR: %%li\",pc);break;}\
 _finished();
 svg_file << global_svg;
 svg_file.close();
-
  ; }" (switchstatements !label_counter "");
 close_out oc;
 retval

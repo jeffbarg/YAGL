@@ -26,7 +26,7 @@ rule token = parse
 | ">="     { GEQ }
 | "if"     { IF }
 | "else"   { ELSE }
-| "for"    { FOR }
+| "iterate" { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
 | "Int"    { INT }

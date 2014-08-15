@@ -7,14 +7,14 @@
 	  | Id of string
 	  | Binop of expr * op * expr
 	  | Call of string * expr list
-	  | ArrayIndex of string * expr 
+	  | ArrayIndex of expr * expr 
 	  | Noexpr
 
  and stmt = Block of stmt list
 	  | Expr of expr
 	  | Return of expr
 	  | If of expr * stmt * stmt
-	  | For of qual * string * expr * stmt 
+	  | For of stmt 
 	  | While of expr * stmt
 	  | Variable of string * expr
 
