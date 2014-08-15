@@ -31,12 +31,13 @@ let translate (globals, functions) =
   let built_in_functions = 
     StringMap.add "print"     (-1) StringMap.empty in
   let built_in_functions =
-    StringMap.add "addCircle" (-2) built_in_functions in
+    StringMap.add "canvas" (-2) built_in_functions in
   let built_in_functions =
-    StringMap.add "addRect"   (-3) built_in_functions in
+    StringMap.add "text"   (-3) built_in_functions in
   let built_in_functions =
-    StringMap.add "title"     (-4) built_in_functions in
-
+    StringMap.add "addCircle"     (-4) built_in_functions in
+  let built_in_functions =
+    StringMap.add "addRect"     (-5) built_in_functions in
 
   let function_indexes = string_map_pairs built_in_functions
     (enum 1 1 (List.map (fun f -> f.fname) functions)) in
