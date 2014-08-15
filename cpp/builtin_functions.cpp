@@ -36,22 +36,3 @@ Json::Value openJson(string path)
   //   }
   return root_node;
 }
-
-int main() 
-{
-  canvas(500, 500);
-  text("This is text", 200, 200, 24);
-  addRect(100, 100, 0, 0, "blue", "red");
-  addCircle(100, 100, 40, "red", "blue");
-  _finished();
-  ofstream svg_file;
-  svg_file.open("test.svg");
-  svg_file << global_svg;
-  svg_file.close();
-  //  system("/Applications/Safari.app/Contents/MacOS/Safari test.svg");
-  //test code
-  //  cout << global_svg << endl;
-  // Json::Value foo = openJson("test.json");
-  return 0;
-}
-
