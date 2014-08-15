@@ -96,59 +96,53 @@ func \\
 
 \subsection{Example YAGL Program}
 \begin{lstlisting}
-func canvas(Array: param1)
+func main()
 {
-	Canvas myGraph = new Canvas()
-	# 0 is ascii art graph, 1 is SVG meant for a browser, 2 is PDF?
-	myGraph.graphType = 0
-	# Opens up command line argument, presumably JSON.
-	Stream s = open $0
-	for (item in s)
-	{	# Say there are only 3 enums of types
-		# 0 is integer, 1 is array, 2 is canvas Object
-		if (let integer_item = item as Int)
-		{
-			myGraph.addRectAllParams(item)
-		}
-		elif (let array_item = item as Array)
-		{
-			myGraph.addRect(item[0], item[1], item[2], item[3])
-		}
+     canvas(500, 500);
+     open("demo1.json");
+
+	iterate {
+		addRect(this["width"], this["height"], this["x"], this["y"], "red", "blue");
 	}
 }
 
-# Notice Last item is a nested Array 
-myData = [3, 4, 5, 1, [3, 1, 5, 6]]
-build canvas(myData)
 
-## Standard Library - preview graph with predefined parameters, 
-spits out ascii art graph to standard output preview(data)
+
+
 \end{lstlisting}
 
 \subsection{More Example Code}
-Below is an example program written in the YAGL language.
+Below is another example program written in the YAGL language.
 
 \begin{lstlisting}
-# This is an example of a YAGL program. 
-# There is one global object always available, the Graph object that you 
-# don't have a handle on, but will manipulate with canvas
-Array myJson = jsonArray(``/path/to/json/data.json'')
+func main() {
+ Int a = numberOfRings();
+ Int b = a;
+ String c = "red";
+ Int d = 0;
 
-#Could also do jsonDict which returns Dict 
-func createGraph()
-{
-    for (Dict item in myJson)
-    {   # Assuming everything in item[``foo''] is string and adding a rect to the gm[``xCoord''], item[``yCoord''], item[``height''], item[``width''])
-        #OR!
-        addCircle(item[``cx''], item[``cy''], item[``r'']
-    }   #Builtin function that provides a title to the global singleton svg object. 
-    title(``YAET, Yet Another Example Title'')
+ canvas(500, 500);
+
+ while (a) {
+   if ((a/2 + a/2) == a) {
+     c = "red";
+   } else {
+     c = "blue";
+   }
+
+   d = (250 * a) / b;
+
+   addCircle(d, 250, 250, c, c);
+
+   a = a - 1;
+ }
+
+ text("A Target!", 40, 40, 300);
 }
 
-createGraph()
-# Need to call canvas for the graph to be actually made
-canvas(<nameOfFile>, <width>, <height>)
-
+func numberOfRings() {
+ return 50;
+}
 \end{lstlisting}
 
 \section{Language Reference Manual}
@@ -171,7 +165,7 @@ An identifier is a sequence of ASCII alphanumeric characters and the underscore 
 
 \subsubsection{Keywords}
 The following is an enumeration of all the keywords required by a YAGL implementation:
-`if`, `else`, `for`, `in`, `func`, `return`, `while`, 'this'.  Identifiers cannot have the same name as keywords.
+`if`, `else`, `in`, `func`, `return`, `iterate`, `while`, 'this'.  Identifiers cannot have the same name as keywords.
 
 \subsubsection{Built-in Functions}
 The following functions are built-in:\\
@@ -191,7 +185,8 @@ The following tokens are operators:
 YAGL features four built-in data types, String, Array, Integer, and Dictionary. String represents string objects, Arrays represent an ordered sequence of Integers or Dictionaries. Arrays must have all elements of the same type.  Dictionaries represent an implementation of a key-value storage system and are mainly used as a YAGL container for JSON data. Dictionaries may have only Strings as keys and their values are integers. Arrays and Dictionaries are iterable and hence may be used in the declaration of a for loop. 
 
 \subsection{Data Model}
-As YAGL’s primarily purpose is a language to programmatically create SVGs (scalable vector graphics), it makes sense to have just one global “SVG” Object. In addition, YAGL supports one global reference to a Dictionary of JSON data. The reference does not need an explicit handle, a simple call to openJson is enough to establish this global variable. A YAGL environment also provides a handle to a "this" object. The "this" object refers to a previously opened Dictionary via an open JSON call.
+As YAGL’s primarily purpose is a language to programmatically create SVGs (scalable vector graphics),
+therefore it makes sense to have just one global “SVG” Object. In addition, YAGL supports one global reference to a Dictionary of JSON data. The reference does not need an explicit handle, a simple call to open is enough to establish this global variable. A YAGL environment also provides a handle to a "this" object. The "this" object refers to a previously opened Dictionary via an open JSON call.
 
 \subsection{JSON Protocol}
 The YAGL spec recommends that JSON data passed to the 
@@ -223,7 +218,7 @@ The multiplicator operators *, /, follow the usual rules of mathematics and grou
 The additive operators +, - group left to right where + denotes addition and - denotes subtraction
 
 \subsubsection{Relational Operators}
-The relational operators group left to right and return back 1 if the operator evaluates to true and 0 if the operator evaluates to false. 
+The relational operators group left to right and return back 1 if the operator evaluates to true, 0 if the operator evaluates to false. 
  
 \subsubsection{Equality Operators}
 The equality operator == is only valid for either Integer or String types and returns 1 if the operands are equal, 0 otherwise. 
@@ -232,7 +227,7 @@ The equality operator == is only valid for either Integer or String types and re
 There is only one assignment operator, =.  The equals operator accepts a type declaration along with a NAME token for its left operand and an expression for its right operand. 
  
 \subsubsection{Comma Operator}
-A pair of expressions separated by 0 without need of an explicit return declaration. The parameter list is a comma-separated series of identifiers with type names (for example, (Int: a, Int: b, Int: c).  The parameter list can also be empty and just be an empty set of parenthesis. 
+A parameter list is a comma-separated series of identifiers with type names, for example (Int: a, Int: b, Int: c). The parameter list maybe empty in which case it is an empty pair of parenthesis. 
 
 \subsection{Scope}
 
@@ -243,14 +238,14 @@ Identifiers are placed into non-intersecting namespaces.  The two namespaces are
 \textit{While} loops expects an expression and a statement body. The while loop repeats the expression body until the expression yields zero.
 
 \textit{iterate} introduces a block which is executed 
-for the length of the JSON data. 
+for the length of the JSON data under the assumption that \textit{open} was previously called. 
 
 \subsubsection{If Statements}
 
-In an \textit{if} statement, the expression is evaluated, including side-effects, and \textit{if} the result is not 0, the first sub-statement is executed. If it is equal to 0, the else sub-statement is executed if it exists.
+In an \textit{if} statement, the expression is evaluated, including side-effects, and if the result is not 0, the first sub-statement is executed. If it is equal to 0, the else sub-statement is executed if it exists.
 
 \subsection{Grammar}
-This is the comprehensive Grammar for the YAGL programming language. The grammar has terminal symbols NAME, INTEGER, STRING, , OPERATORs, which includes "+", "-", "/", "*", and PUNCTUATION which includes "(", ")", "{", and "}". Note that * after a regular expression denotes zero or more instances of the expression, + denotes one or more instances and ? denotes one or zero.
+This is the comprehensive Grammar for the YAGL programming language. The grammar has terminal symbols NAME, INTEGER, STRING, OPERATORs, which includes "+", "-", "/", "*", and PUNCTUATION which includes "(", ")", "{", and "}". Note that * after a regular expression denotes zero or more instances of the expression, + denotes one or more instances and ? denotes one or zero.
 
 \begin{lstlisting}
 type_spec: Array | Dict | Int | String
@@ -293,20 +288,29 @@ upon encountering a semantic error, i.e. adding a String to an Integer. If the s
 passes to the code generator. At this stage, code generation starts and outputs a single C++ source code file. 
 
 \section{Test Plan}
-The test regression suite is located under the \textbf{/tests/} subdirectory. There are tests for full YAGL functionality as well as MicroC tests to compare their output to.\\\\
+The test regression suite is located under the \textbf{/tests/} subdirectory. \\\\
 
-To execute the entire testsuite, simply execute \textbf{./runyagl} from the command-line.
 
 \section{Lessons Learned}
-The following lessons were learned during the course of this project:\\
 
-\subsection{Start Earlier}
-Time is everything and it would have been less stressful to start earlier. This was an expected problem, as there seems to always be room for improvement.
+The following lessons were learned during the course of this project:
+\subsection{Type System}
+First, we learned that although we designed the language to have a fairly strong type system, at compile time most of the type information is thrown away.  The semantic analysis is where the type information comes into play and where the compiler has the chance to usefully determine whether types are being misused.  The semantic analysis itself is a non-trivial task, therefore we restricted our semantic analysis to only integer expressions.
+\subsection{Byte-Code}
+We also learned that using low-level bytecode and converting back to C++ is actually fairly efficient, because GCC will actually optimize the C code after it's been generated using our code-gen.  Additionally, using a slightly higher-level language C++ allowed us to use better libraries for the tasks we had while stile maintaining the amount of optimization possible.
+\subsection{Stack}
+Finally, we learned the utility of using a stack on the lower-level to manage memory and the allocation of variables that we had.  This allowed us to very easily have several different types and execute logic wherever appropriate by using the stack.  Additionally, this stack allowed us to create our iterate keyword without too much difficulty.
+
 
 \subsection{Start Earlier}
 Time is everything and it would have been less stressful to start earlier. This was an expected problem, as there seems to always be room for improvement.
 
 \subsection{Another Problem?}
+Semantic analysis of non-integer expressions is hard
+JSON libraries in C are typically awful. Necessitated a move to    C++.
+Git is hard to use correctly
+Error message handling is worth it's weight in gold.
+Preference for byte-code
 
 
 \section{Complete Listing of Code}
