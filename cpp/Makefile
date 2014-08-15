@@ -5,5 +5,5 @@ TEST:$(OBJS)
 	g++ builtin_functions.cpp jsoncpp.cpp -o TEST -I./json
 
 clean:
-	rm -f TEST *~* *.*~* *.svg
+	rm -f TEST *~* *.*~* *.o *.svg
 
