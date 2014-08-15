@@ -1,10 +1,16 @@
-Int b = 3;
-
-func ballHARD(Int: a) {
-  return a;
+Int d = 3;
 
 func main() { 
   Int a = 5;
-  a = 2 * 250;
+  String c = "ASDF";
+
+  canvas(500, 500);
+  a = 2;
   addCircle(a,150,100,"red","blue");
+
+
+}
+
+func ballHARD(Int: a) {
+  return a;
 }
