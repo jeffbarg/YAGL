@@ -52,7 +52,7 @@ yaglc.tar.gz : $(TARFILES)
 .PHONY : clean
 clean :
 	rm -f yaglc parser.ml parser.mli scanner.ml testall.log \
-	*.cmo *.cmi *.out *.diff *.*~* *.c*
+	*.cmo *.cmi *.out *.diff *.*~* *.c* *.svg
 
 run:$(CPPOBJS)
 	make && ./yaglc easy_example.yagl && clang-format -style=LLVM -i example.cpp && g++ example.cpp -L./cpp -o example.out -I./cpp/json && ./example.out
