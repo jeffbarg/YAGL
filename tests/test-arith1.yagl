@@ -1,4 +1,0 @@
-func main()
-{
-   Int a = 39 + 3;
-}

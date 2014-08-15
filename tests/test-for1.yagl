@@ -1,7 +1,0 @@
-func main()
-{
-   Int a;
-   For(a = 0, a < 5, a = a + 1) {
-   	Int b = a;
-   }
-}
