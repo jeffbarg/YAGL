@@ -75,7 +75,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
   | FOR LPAREN qual ID IN expr RPAREN stmt { For($3, $4, $6, $8) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  | ID ASSIGN expr { Variable($1, $3) }
+  | ID ASSIGN expr SEMI { Variable($1, $3) }
 
 qual:
   | ARRAY { Array }
