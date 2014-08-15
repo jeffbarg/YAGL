@@ -12,6 +12,7 @@ let rec infer_typ = function
       if check_expr e1 t1 && check_expr e2 t2
       then ret_typ (* Make this more informative *)
       else raise (SemanticError "Type problem with: ")
+  | _ -> TInt 
 
 and infer_op_typ = function
   | Add | Mult | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq -> (TInt, TInt, TInt)

@@ -11,12 +11,12 @@
 	  | Noexpr
 
  and stmt = Block of stmt list
-    | Expr of expr
-    | Return of expr
-    | If of expr * stmt * stmt
-    | For of qual * string * expr * stmt 
-    | While of expr * stmt
-    | Variable of string * expr
+	  | Expr of expr
+	  | Return of expr
+	  | If of expr * stmt * stmt
+	  | For of qual * string * expr * stmt 
+	  | While of expr * stmt
+	  | Variable of string * expr
 
  and qual = Dict | Array | Int | String 
            
