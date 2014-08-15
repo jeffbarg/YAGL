@@ -1,0 +1,12 @@
+
+
+/* Basic Example of algorithmic building of circle */
+func main()
+{
+    Int a = 10;
+    while (a < 30)
+    {
+	addCircle(a + 1, a + 2, "blue", "red"); 
+	a = a + 1
+    }	
+}
