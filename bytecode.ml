@@ -16,8 +16,6 @@ LitInt of int (* Push a literal *)
  | Bne of int 
  | Bra of int 
  | Index
- | Itr
- | EndItr
  | NextItr
  | Hlt
 

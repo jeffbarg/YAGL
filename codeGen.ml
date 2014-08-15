@@ -26,7 +26,7 @@ let generate prog =
   #import <iostream>
   #include <cstdint>
 
-  typedef intptr_t int64;
+  typedef long int64;
 
   using namespace std;
 
@@ -67,6 +67,8 @@ Json::Value openJson(string path)
     string s1;
     string s2;
     string s3;
+
+    char * temp_char_star;
 
     int64 i = 0;
 
@@ -140,7 +142,7 @@ let rec execute_prog fp sp pc =
     fprintf oc "%s"
         "
         s1 = (char *) stack[sp-1];
-        text(s1, stack[sp-2], stack[sp-3], stack[sp-4]);pc++;"; 
+        text(s1, (int64) stack[sp-2], (int64) stack[sp-3], (int64)stack[sp-4]);pc++;"; 
   | Jsr(-4) ->
     fprintf oc "%s"
         "
@@ -149,15 +151,13 @@ let rec execute_prog fp sp pc =
         addCircle((int64) stack[sp-1], (int64) stack[sp-2], (int64) stack[sp-3], s1, s2);pc++;"; 
   | Jsr(-5) ->
     fprintf oc "%s"
-        "addRect(stack[sp-1], stack[sp-2], stack[sp-3], stack[sp-4], stack[sp-5], stack[sp-6]);pc++;"; 
+        "s1 = (char *) stack[sp-5]; s2 = (char *)stack[sp-6];addRect((int64) stack[sp-1], (int64) stack[sp-2],(int64) stack[sp-3], (int64) stack[sp-4],s1, s2);pc++;"; 
   | Jsr(-6) ->
     fprintf oc "%s"
-        "s1 = (char *) stack[sp-1]; printf(\"asdfasdfa!!!!%i\", itr_counter);itr = openJson(s1); itr_counter =0;printf(\"%i\", itr_counter);pc++;";
+        "s1 = (char *) stack[sp-1]; itr = openJson(s1); itr_counter =0;printf(\"itr_counter: %i\\n\", itr_counter);pc++;";
   | Jsr i -> fprintf oc "stack[sp]=(void *)(pc+1);sp++;pc=%i;" i;
-  | Itr -> ()
-  | NextItr -> fprintf oc "size = itr.size(); printf(\"size: %%i\", size); if(itr_counter >= size) { /* put 0 on stack */ stack[sp] = (void *)(0);sp++; } else { self = itr.get((Json::ArrayIndex)0, self); printf(\"%%i\", itr_counter);itr_counter++; /* put 1 on stack */ stack[sp] = (void *)(1);sp++;}pc++;";
-  | EndItr -> ()
-  | Index -> ()
+  | NextItr -> fprintf oc "size = itr.size(); if(itr_counter >= size) { /* put 0 on stack */ stack[sp] = (void *)(0);sp++; } else { self = itr.get((Json::ArrayIndex)itr_counter, self); if(DEBUG)printf(\"itr_counter: %%i\", itr_counter);itr_counter++; /* put 1 on stack */ stack[sp] = (void *)(1);sp++;}pc++;";
+  | Index ->  fprintf oc "s1 = (char *)stack[sp-1]; op1 = (self.get(s1, &self).asInt()); stack[sp-1] = (void *)op1;pc++;";
   | Ent i -> fprintf oc "stack[sp]=(void *)fp;fp=sp;sp+=(%i+1);pc++;" i;
   | Rts i -> fprintf oc "new_fp=(int64)stack[fp];new_pc=(int64)stack[fp-1];stack[(fp-1-%i)]=stack[sp-1];sp=fp-%i;fp=new_fp;pc=new_pc;" i i;
   | Beq i -> print_endline ("\n\n\n" ^ string_of_int i); fprintf oc "pc+=((stack[sp-1] != 0)?%i:1);sp--;" i;
