@@ -92,9 +92,11 @@ func \\
 
 
 \section{Language Tutorial}
+
+d
 \subsection{Example YAGL Program}
 \begin{lstlisting}
-func makeGraph(Array: param1)
+func canvas(Array: param1)
 {
 	Canvas myGraph = new Canvas()
 	# 0 is ascii art graph, 1 is SVG meant for a browser, 2 is PDF?
@@ -117,7 +119,7 @@ func makeGraph(Array: param1)
 
 # Notice Last item is a nested Array 
 myData = [3, 4, 5, 1, [3, 1, 5, 6]]
-build makeGraph(myData)
+build canvas(myData)
 
 ## Standard Library - preview graph with predefined parameters, 
 spits out ascii art graph to standard output preview(data)
@@ -129,7 +131,7 @@ Below is an example program written in the YAGL language.
 \begin{lstlisting}
 # This is an example of a YAGL program. 
 # There is one global object always available, the Graph object that you 
-# don't have a handle on, but will manipulate with makeGraph
+# don't have a handle on, but will manipulate with canvas
 Array myJson = jsonArray(``/path/to/json/data.json'')
 
 #Could also do jsonDict which returns Dict 
@@ -144,8 +146,8 @@ func createGraph()
 }
 
 createGraph()
-# Need to call makeGraph for the graph to be actually made
-makeGraph(<nameOfFile>, <width>, <height>)
+# Need to call canvas for the graph to be actually made
+canvas(<nameOfFile>, <width>, <height>)
 
 \end{lstlisting}
 
@@ -159,36 +161,45 @@ A YAGL program is written in the 7-bit ASCII character set and is divided into a
 
 \subsubsection{Tokens}
 A logical line may consist of the following tokens assuming correct syntax is used: \\
-SEMI, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, COLON, IN, PLUS, MINUS, TIMES, DIVIDE, ASSIGN, FUNC, EQ, NEQ, LT, LEQ, GT, GEQ, RETURN, IF, ELSE, FOR, WHILE, INTLITERAL, INT, DICT, ARRAY, STRING, ID, STRINGLITERAL, EOF.
+SEMI, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, COLON, IN, LBRACK, RBRACK, PLUS, MINUS, TIMES, DIVIDE, ASSIGN, FUNC, EQ, NEQ, LT, LEQ, GT, GEQ, RETURN, IF, ELSE, FOR, WHILE. 
 
 \subsubsection{Comments} 
-Comments are introduced by the '\#' character and last until they encounter the next NEWLINE token.
+Comments are introduced by '/*' and last until they encounter the next '*/'.
 
 \subsubsection{Identifiers}
-An identifier is a sequence of ASCII alphatic letters and the underscore character where upper and lower case are distinct; ASCII digits may not be included in an identifier.  Identifiers must start with a lowercase letter.
+An identifier is a sequence of ASCII alphanumeric characters and the underscore character where upper and lower case are distinct; ASCII digits may not be included in an identifier.  Identifiers must start with a lowercase letter.
 
 \subsubsection{Keywords}
 The following is an enumeration of all the keywords required by a YAGL implementation:
-`if`, `elif`, `for`, `in`, `break`, `func`, `else`, `return`, `continue`, `print`, `while`.  Identifiers cannot have the same name as keywords.
+`if`, `else`, `for`, `in`, `func`, `return`, `while`.  Identifiers cannot have the same name as keywords.
+
+\subsubsection{Built-in Functions}
+The following functions are built-in:\\
+print(String: x), print\_int(Int: x), addRect(Int: width, Int: height, Int: x, Int: y, String: color, String: border\_color), addCircle(Int: r, Int: cx, Int: cy, String: color, String: border\_color), text(String: title, Int: x, Int: y, Int: size), canvas(Int: width, Int: height)
 
 \subsubsection{String Literals}
 YAGL string literals begin with a double-quote (“) followed by a finite sequence of non-double-quote ASCII characters and close with a double-quote (“). YAGL strings do not recognize escape sequences. An example of a YAGL string literal is String bar = “Hello World”.
 
 \subsubsection{Integer Literals}
-YAGL supports integer literals.  An integer literal means any sequence of digits that doesn’t lead with a 0.  Integer literals are in base 10.  Integer literals are the only type of numeric literal recognized by the language.  Integer literals can only be positive.  Additionally, integer literals will use the system implementation of integer (so either 16, 32, or 64 bits).  Any integer literal larger than the system int limit is not legal syntax and will not compile.
+YAGL supports integer literals.  An integer literal is a sequence of digits that does not lead with 0. Integer literals are base 10 and are the only type of numeric literal recognized by the language. Integer literals can only be positive.  Additionally, integer literals will use 64 bits.
 
 \subsubsection{Operators}
 The following tokens are operators:
-‘+’, ‘-’, ‘*’, ‘/’, ‘$>$’, ‘$<$’, ‘$<=$’, ‘$>=$’, ‘==’, ‘$\%$’, ‘=’
-
-\subsection{Meaning of Identifiers}
-Identifiers either refer to functions, builtin Objects or user defined variables.  Identifiers must start with a lowercase letter.
+‘+’, ‘-’, ‘*’, ‘/’, ‘$>$’, ‘$<$’, ‘$<=$’, ‘$>=$’, ‘==’, ‘=’
 
 \subsubsection{Basic Types}
 YAGL features four built-in data types, String, Array, Integer, and Dictionary. String represents string objects, Arrays represent an ordered sequence of Integers or Dictionaries. Arrays must have all elements of the same type.  Dictionaries represent an implementation of a key-value storage system and are mainly used as a YAGL container for JSON data. Dictionaries may have only Strings as keys and their values are integers. Arrays and Dictionaries are iterable and hence may be used in the declaration of a for loop. 
 
 \subsection{Data Model}
-As YAGL’s primarily purpose is a language to programmatically create SVGs (scalable vector graphics), it makes sense to have just one global “SVG” Object. This is similar in spirit to EmcaScript’s global “this” object which represents the host environment. Although end users in YAGL may not get a handle  on the “SVG” Object, they may interact with it using builtin library functions such as title, addRect, addCircle, etc. This data model simplifies the end user’s experience by allowing them to focus on their algorithmic manipulation of their data. A call to makeGraph along with initial parameters executes the code from top to bottom. All code written after a call to makeGraph is not executed. 
+As YAGL’s primarily purpose is a language to programmatically create SVGs (scalable vector graphics), it makes sense to have just one global “SVG” Object. In addition, YAGL supports one global reference to a Dictionary of JSON data. The reference does not need an explicit handle, a simple call to openJson is enough to establish this global variable. A YAGL environment also provides a handle to a "this" object. The "this" object refers to a previously opened Dictionary via an open JSON call.
+
+\subsection{JSON Protocol}
+The YAGL spec recommends that JSON data passed to the 
+builtin function openJson be of the following format:
+\begin{lstlisting}
+[{"height":<Integer Literal>, "width":<Integer Literal>,
+ "x":<Integer Literal>, "y":<Integer Literal>}...]
+\end{lstlisting}
 
 \subsection{Expressions}
 The precedence of expression operators will first prioritize function calls, then parentheses, then multiplication/division/modulo, then addition and subtraction.  
@@ -206,8 +217,7 @@ followed by a possibly empty set of parentheses. Functions may return an explici
 \subsection{Operators}
 
 \subsubsection{Multiplicative Operators}
-The multiplicator operators *, /, %, follow the usual rules of mathematics and group left to right, where * denotes multiplication, / denotes division, and % denotes modular arithmetic;
-division by 0 will return 0.  Division will also truncate decimal parts of numbers to the nearest integer lower than the mathematical division.
+The multiplicator operators *, /, follow the usual rules of mathematics and group left to right, where \* denotes multiplication, / denotes division. Division by 0 is undefined.  Division will also truncate decimal parts of numbers to the nearest integer lower than the mathematical division.
 
 \subsubsection{Additive Operators}
 The additive operators +, - group left to right where + denotes addition and - denotes subtraction
@@ -218,19 +228,11 @@ The relational operators group left to right and return back 1 if the operator e
 \subsubsection{Equality Operators}
 The equality operator == is only valid for either Integer or String types and returns 1 if the operands are equal, 0 otherwise. 
 
-\subsubsection{Logical And}
-The \&\& operators groups left to right and returns 1 if both its operands
-compare unequal to zero with 0 otherwise, logical and is only defined for integers.
-
-\subsubsection{Logical Or}
-The $\vert \vert$ operators group left to right and return 1 if either of its operands compares unequal to zero and 0 otherwise.
-
 \subsubsection{Assignment Expressions}
 There is only one assignment operator, =.  The equals operator accepts a type declaration along with a NAME token for its left operand and an expression for its right operand. 
  
 \subsubsection{Comma Operator}
-A pair of expressions separated bys 0 without need of an explicit return declaration. 
-The parameter list is a comma-separated series of identifiers with type names (for example, (int a, int b, int c).  The parameter list can also be empty and just be an empty set of parenthesis. 
+A pair of expressions separated by 0 without need of an explicit return declaration. The parameter list is a comma-separated series of identifiers with type names (for example, (Int: a, Int: b, Int: c).  The parameter list can also be empty and just be an empty set of parenthesis. 
 
 \subsection{Scope}
 
@@ -238,34 +240,32 @@ The parameter list is a comma-separated series of identifiers with type names (f
 Identifiers are placed into non-intersecting namespaces.  The two namespaces are functions and file level.  The lexical scope of an object or function identifier that appears in a block begins at the end of its declarator and persists to the end of the block in which it appears.  The scope of a parameter of a function begins at the start of the function block and extends to the end.  If an identifier is reused at the head of a block or as a function parameter, any other declaration of the identifier is shadowed until the end of the block or function. 
 
 \subsubsection{Iteration Statements}
+\textit{While} loops expects an expression and a statement body. The while loop repeats the expression body until the expression yields zero.
 
-\textit{For} loops iterate through Arrays or Dictionaries.  The type specifier is given as a parameter in the for loop.  If the array contains no objects of the specified type, the loop simply does not execute.  For an array, the variable specified will be bound to each of the elements of the array sequentially and the loop statement will run.  For a Dictionary, the string key will be bound to the variable specified in the for loop; moreover, the only allowed type for the iterated variable is String.  The order of the dictionary iteration is left up to implementation details.  The order of an array is from index 0 to the last index in the array.
-
-While loops execute after theinalogously, the continue keyword may only be used within the body of a \textit{for} or \textit{while} loop and it signals the flow of control to move onto the next item in iteration. 
+\textit{iterate} introduces a block which is executed 
+for the length of the JSON data. 
 
 \subsubsection{If Statements}
 
-In an \textit{if} statement, the expression is evaluated, including side-effects, and \l symbols NAME, INTEGER, STRING, NEWLINE, OPERATORs, which includes ‘+’, ‘-’, ‘/’, ‘*’, ‘%’, and PUNCTUATION which includes ‘(‘, ‘)’, ‘{‘, and ‘}’.  Note that * after a regular expression denotes zero or more instances of the expression, + denotes zero or more instances and ? denotes one or zero. 
+In an \textit{if} statement, the expression is evaluated, including side-effects, and \textit{if} the result is not 0, the first sub-statement is executed. If it is equal to 0, the else sub-statement is executed if it exists.
+
+\subsection{Grammar}
+This is the comprehensive Grammar for the YAGL programming language. The grammar has terminal symbols NAME, INTEGER, STRING, , OPERATORs, which includes "+", "-", "/", "*", and PUNCTUATION which includes "(", ")", "{", and "}". Note that * after a regular expression denotes zero or more instances of the expression, + denotes one or more instances and ? denotes one or zero.
 
 \begin{lstlisting}
 type_spec: Array | Dict | Int | String
-flow_stmt: break_stmt | continue_stmt | return_stmt
-break_stmt: ‘break’
-continue_stmt: ‘continue’
 return_stmt: ‘return’ [expr]
 func_definition: 'func' NAME parameters ‘{‘ suite ‘}’
 suite: simple_stmt | compound_stmt
 simple_stmt: (expr_stmt | print_stmt) NEWLINE
-expr_stmt: asn_stmt, NEWLINE | expr 
+expr_stmt: asn_stmt, ; | expr 
 asn_stmt: type_specifier, NAME ‘=’ expr
 exefinition | ( if_stmt | while_stmt | for_stmt | simple_stmt )+
 if_stmt: ‘if’ ‘(‘ bool_expr ‘)’ suite (‘elif’ suite)* (‘else’ suite)?
 while_stmt: ‘while’ ‘(‘ bool_expr ’)’ suite
-for_stmt: ‘for’ ‘(‘ type_spec NAME ‘in’ NAME ‘)’ ‘{‘ suite ‘}’
+iterate_stmt: 'iterate' '(' NAME ')' suite
 bool_expr: 1 | 0 | logic_and | logic_or 
-logic_and: expr ‘&&’ expr 
-logic_or: expr ‘||’ expr 
-comp_op: ‘<’ | ‘>’ | ‘==’ | ‘>=’ | ‘<=’ | ‘!=’
+comp_op: ‘<’ | ‘>’ | ‘==’ | ‘>=’ | ‘<=’
 parameters: ‘(‘ [args_list] ‘)’
 args_list: (type_spec NAME)*
 \end{lstlisting}
@@ -279,12 +279,14 @@ args_list: (type_spec NAME)*
 
 \textbf{Week 1} & \textbf{Week 2} & \textbf{Week 3} & \textbf{Week 4} & \textbf{Week 5} & \textbf{Week 6}\\ [0.5ex] % inserts table %heading
 \hline
-Proposal, Plan&Parser&Syntactic Analysis&Bytecode&Compiler&Test Suite and Final Project \\
+Proposal, Plan&Parser&Semantic Analysis&Bytecode&Compiler&Test Suite and Final Project \\
 
 \hline
 \end{tabular}
 \end{table}
 \section{Architectural Design}
+The YAGL internal stack begins with the a lexical tokenizer. The tokenizer converts a stream of chars into a 
+list of tokens in accordance with YAGL's grammar. The resultant list is then passed 	
 \section{Test Plan}
 The test regression suite is located under the \textbf{/tests/} subdirectory. There are tests for full YAGL functionality as well as MicroC tests to compare their output to.\\\\
 
