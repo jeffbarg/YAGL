@@ -21,22 +21,23 @@
 
 \setlength{\parindent}{0in}
 \begin{document}
-\title{YAGL: Yet Another Graphing Language\\Language Reference Manual}
+\title{YAGL: Yet Another Graphics Language\\Language Reference Manual}
 \author{Edgar Aroutiounian, Jeff Barg, Robert Cohen}
 \date{\today}
 \maketitle
 
-\abstract{YAGL is a programming language for generating graphs in SVG format from JSON formatted data.
+\abstract{YAGL is a programming language for generating graphics in SVG format from JSON formatted data.
 }
 
 \section{Introduction}
 This manual describes the YAGL programming language as specified by the YAGL team. 
 
 \section{Lexical Conventions}
-A YAGL program is written in the 7-bit ASCII character set and is divided into a number of logical lines. A logical line terminates by the token NEWLINE, where a logical line is constructed from one or more physical lines. A physical line is a sequence of ASCII characters that are terminated by an end-of-line character.
+A YAGL program is written in the 7-bit ASCII character set and is divided into a number of logical lines. A logical line terminates by the token SEMI, where a logical line is constructed from one or more physical lines. A physical line is a sequence of ASCII characters that are terminated by a semi-colon character.
 
 \subsection{Tokens}
-Besides the NEWLINE token, the following tokens also exist: NAME, INTEGER, STRING, and OPERATOR, where a LITERAL is either a String literal or an Integer literal.  
+A logical line may consist of the following tokens assuming correct syntax is used: \\
+SEMI, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, COLON, IN, PLUS, MINUS, TIMES, DIVIDE, ASSIGN, FUNC, EQ, NEQ, LT, LEQ, GT, GEQ, RETURN, IF, ELSE, FOR, WHILE, INTLITERAL, INT, DICT, ARRAY, STRING, ID, STRINGLITERAL, EOF.
 
 \subsection{Comments} 
 Comments are introduced by the '\#' character and last until they encounter the next NEWLINE token.
@@ -172,8 +173,6 @@ createGraph()
 # Need to call makeGraph for the graph to be actually made
 makeGraph(<nameOfFile>, <width>, <height>)
 
-\begin{document}
-\begin{lstlisting}
 \end{lstlisting}
 
 \end{document}

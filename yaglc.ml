@@ -1,10 +1,11 @@
 open Ast
 
-let file = Sys.argv.(1)
-
+let file = if Array.length Sys.argv > 1 && Filename.check_suffix Sys.argv.(1) ".yagl"
+	   then open_in Sys.argv.(1) 
+	   else (print_endline "Must provide a YAGL source and the \
+				file must end in .yagl";exit 1)
 let _ =
-  let ic = open_in file in
-  let lexbuf = Lexing.from_channel ic in
+  let lexbuf = Lexing.from_channel file in
   let program = Parser.program Scanner.token lexbuf in 
 (* If we get to here, then the parser is okay! *)
   (* List.iter (fun a -> print_endline (a.id)) (fst program);
@@ -13,5 +14,4 @@ let _ =
   let verified = Semantic.verify program in 
 (* Would be nice to have a static checker, so that we can reject int + string *)
   let compiled_code = Compile.translate verified in 
-  print_endline "here";
   CodeGen.generate compiled_code
