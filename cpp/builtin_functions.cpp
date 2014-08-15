@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <stdlib.h>
-#include "json.h"
+#include "json/json.h"
 using namespace std;
 //The singular svg created. 
 string global_svg;

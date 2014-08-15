@@ -2,14 +2,14 @@
 
 rule token = parse
 | [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
-| "/*"     { comment lexbuf }           (* Comments *)
-| '('      { LPAREN }
-| ')'      { RPAREN }
-| '['      { LBRACK }
-| ']'      { RBRACK } 
-| '{'      { LBRACE }
-| '}'      { RBRACE }
-| ';'      { SEMI }
+| "/*"        { comment lexbuf } 
+| ';'         { SEMI} 
+| '('         { LPAREN }
+| ')'         { RPAREN }
+| '['         { LBRACK }
+| ']'         { RBRACK } 
+| '{'         { LBRACE }
+| '}'         { RBRACE }
 | ','      { COMMA }
 | ':'      { COLON }
 | '+'      { PLUS }
