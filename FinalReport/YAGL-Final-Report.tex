@@ -172,10 +172,10 @@ The following functions are built-in:\\
 print(String: x), print\_int(Int: x), addRect(Int: width, Int: height, Int: x, Int: y, String: color, String: border\_color), addCircle(Int: r, Int: cx, Int: cy, String: color, String: border\_color), text(String: title, Int: x, Int: y, Int: size), canvas(Int: width, Int: height)
 
 \subsubsection{String Literals}
-YAGL string literals begin with a double-quote (“) followed by a finite sequence of non-double-quote ASCII characters and close with a double-quote (“). YAGL strings do not recognize escape sequences. An example of a YAGL string literal is String bar = “Hello World”.
+YAGL string literals begin with a double-quote (") followed by a finite sequence of non-double-quote ASCII characters and close with a double-quote ("). YAGL strings do not recognize escape sequences. An example of a YAGL string literal is String bar = "Hello World".
 
 \subsubsection{Integer Literals}
-YAGL supports integer literals.  An integer literal is a sequence of digits that does not lead with 0. Integer literals are base 10 and are the only type of numeric literal recognized by the language. Integer literals can only be positive.  Additionally, integer literals will use 64 bits.
+YAGL supports integer literals.  An integer literal is a sequence of digits that does not lead with 0. Integer literals are base 10 and are the only type of numeric literal recognized by the language, Integer literals can only be positive.  Additionally, integer literals will use 64 bits.
 
 \subsubsection{Operators}
 The following tokens are operators:
@@ -186,11 +186,11 @@ YAGL features four built-in data types, String, Array, Integer, and Dictionary. 
 
 \subsection{Data Model}
 As YAGL’s primarily purpose is a language to programmatically create SVGs (scalable vector graphics),
-therefore it makes sense to have just one global “SVG” Object. In addition, YAGL supports one global reference to a Dictionary of JSON data. The reference does not need an explicit handle, a simple call to open is enough to establish this global variable. A YAGL environment also provides a handle to a "this" object. The "this" object refers to a previously opened Dictionary via an open JSON call.
+therefore it makes sense to have just one global “SVG” Object. In addition, YAGL supports one global reference to a Dictionary of JSON data. The reference does not need an explicit handle, a simple call to open is enough to establish this global variable. A YAGL environment also provides a handle to a "this" object. The "this" object refers to a previously opened Dictionary via an open call.
 
 \subsection{JSON Protocol}
 The YAGL spec recommends that JSON data passed to the 
-builtin function openJson be of the following format:
+builtin function \textbf{open} be of the following format:
 \begin{lstlisting}
 [{"height":<Integer Literal>, "width":<Integer Literal>,
  "x":<Integer Literal>, "y":<Integer Literal>}...]
@@ -227,7 +227,7 @@ The equality operator == is only valid for either Integer or String types and re
 There is only one assignment operator, =.  The equals operator accepts a type declaration along with a NAME token for its left operand and an expression for its right operand. 
  
 \subsubsection{Comma Operator}
-A parameter list is a comma-separated series of identifiers with type names, for example (Int: a, Int: b, Int: c). The parameter list maybe empty in which case it is an empty pair of parenthesis. 
+A parameter list is a comma-separated series of identifiers with type names, for example \textbf{(Int: a, Int: b, Int: c)}. The parameter list maybe empty in which case it is an empty pair of parenthesis. 
 
 \subsection{Scope}
 
@@ -237,12 +237,11 @@ Identifiers are placed into non-intersecting namespaces.  The two namespaces are
 \subsubsection{Iteration Statements}
 \textit{While} loops expects an expression and a statement body. The while loop repeats the expression body until the expression yields zero.
 
-\textit{iterate} introduces a block which is executed 
-for the length of the JSON data under the assumption that \textit{open} was previously called. 
+The \textit{iterate} keyword introduces a block which is executed for the length of the JSON data under the assumption that \textit{open} was previously called. 
 
 \subsubsection{If Statements}
 
-In an \textit{if} statement, the expression is evaluated, including side-effects, and if the result is not 0, the first sub-statement is executed. If it is equal to 0, the else sub-statement is executed if it exists.
+In an \textit{if} statement, the expression is evaluated, including side-effects, and if the result is not 0, the first sub-statement is executed. If it is equal to 0, the else sub-statement is executed provided that it exists.
 
 \subsection{Grammar}
 This is the comprehensive Grammar for the YAGL programming language. The grammar has terminal symbols NAME, INTEGER, STRING, OPERATORs, which includes "+", "-", "/", "*", and PUNCTUATION which includes "(", ")", "{", and "}". Note that * after a regular expression denotes zero or more instances of the expression, + denotes one or more instances and ? denotes one or zero.
@@ -288,31 +287,22 @@ upon encountering a semantic error, i.e. adding a String to an Integer. If the s
 passes to the code generator. At this stage, code generation starts and outputs a single C++ source code file. 
 
 \section{Test Plan}
-The test regression suite is located under the \textbf{/tests/} subdirectory. \\\\
-
+The test suite is executed via a python script called 
+run\_tests.py. Instructions are in the README.md of the 
+YAGL project. 
 
 \section{Lessons Learned}
 
 The following lessons were learned during the course of this project:
+
 \subsection{Type System}
 First, we learned that although we designed the language to have a fairly strong type system, at compile time most of the type information is thrown away.  The semantic analysis is where the type information comes into play and where the compiler has the chance to usefully determine whether types are being misused.  The semantic analysis itself is a non-trivial task, therefore we restricted our semantic analysis to only integer expressions.
+
 \subsection{Byte-Code}
 We also learned that using low-level bytecode and converting back to C++ is actually fairly efficient, because GCC will actually optimize the C code after it's been generated using our code-gen.  Additionally, using a slightly higher-level language C++ allowed us to use better libraries for the tasks we had while stile maintaining the amount of optimization possible.
+
 \subsection{Stack}
-Finally, we learned the utility of using a stack on the lower-level to manage memory and the allocation of variables that we had.  This allowed us to very easily have several different types and execute logic wherever appropriate by using the stack.  Additionally, this stack allowed us to create our iterate keyword without too much difficulty.
-
-
-\subsection{Start Earlier}
-Time is everything and it would have been less stressful to start earlier. This was an expected problem, as there seems to always be room for improvement.
-
-\subsection{Another Problem?}
-Semantic analysis of non-integer expressions is hard
-JSON libraries in C are typically awful. Necessitated a move to    C++.
-Git is hard to use correctly
-Error message handling is worth it's weight in gold.
-Preference for byte-code
-
+We learned the utility of using a stack on the lower-level to manage memory and the allocation of variables that we had.  This allowed us to very easily have several different types and execute logic wherever appropriate by using the stack.  Additionally, this stack allowed us to create our iterate keyword without too much difficulty.
 
 \section{Complete Listing of Code}
-Why?
 \end{document}
